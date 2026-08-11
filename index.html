@@ -903,14 +903,15 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 /* ==========================================================================
    19. ANIMAÇÕES DE ENTRADA
    ========================================================================== */
-.reveal{
+/* Progressive enhancement: o estado inicial escondido só vale quando o script
+   inicial marcou o elemento raiz com a classe "js". Sem JS, tudo aparece. */
+.js .reveal{
   opacity:0;
   transform:translateY(20px);
   transition:opacity 560ms ease-out,transform 560ms ease-out;
   transition-delay:calc(var(--i,0) * 100ms);
 }
-.reveal.is-visible{opacity:1;transform:none}
-.no-js .reveal{opacity:1;transform:none}
+.js .reveal.is-visible{opacity:1;transform:none}
 
 /* ==========================================================================
    20. BREAKPOINTS
@@ -970,7 +971,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     transition-duration:.01ms !important;
     scroll-behavior:auto !important;
   }
-  .reveal{opacity:1;transform:none}
+  .js .reveal{opacity:1;transform:none}
   .marquee-track{animation:none}
 }
 
@@ -982,7 +983,9 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 </style>
 </head>
 
-<body class="no-js">
+<body>
+
+<script>document.documentElement.classList.add('js');</script>
 
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
@@ -1587,7 +1590,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 <script>
 (function () {
   'use strict';
-  document.body.classList.remove('no-js');
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
