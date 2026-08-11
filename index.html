@@ -264,6 +264,117 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 .btn-block{width:100%}
 
 /* ==========================================================================
+   5b. ANIMAÇÕES DOS BOTÕES
+   Cada efeito vive na sua própria classe e não encosta nas outras.
+   Todas ficam pausadas por padrão e só rodam com .fx-on, que um
+   IntersectionObserver liga quando o botão está por perto da tela — fora
+   dela nada é repintado, então o scroll não paga por isso.
+   ========================================================================== */
+
+/* --- 1. Linha roxa correndo (CTA principal "Quero meu site") -------------
+   Gira o ÂNGULO do conic-gradient, não o elemento. Rotacionar o pseudo com
+   transform faria a pílula inteira girar e varrer uma elipse atravessando o
+   botão — o ângulo registrado mantém a moldura parada e só a luz corre.
+   Sem suporte a @property o var() invalida o gradiente e o anel simplesmente
+   não aparece, sem deixar artefato. */
+@property --btn-trace-angle{
+  syntax:'<angle>';
+  inherits:false;
+  initial-value:0deg;
+}
+.btn-trace{position:relative;isolation:isolate}
+.btn-trace::before{
+  content:"";
+  position:absolute;
+  inset:-3px;
+  border-radius:inherit;
+  padding:3px;
+  /* rgba do próprio roxo em vez de "transparent": interpolar até o preto
+     transparente deixaria a ponta da linha acinzentada */
+  background:conic-gradient(from var(--btn-trace-angle),
+    rgba(109,94,240,0) 0%,
+    var(--color-brand) 12%,
+    var(--color-brand) 18%,
+    rgba(109,94,240,0) 34%);
+  /* recorta só a moldura: a máscara do content-box é subtraída da total */
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:btn-trace-spin 2.5s linear infinite;
+  animation-play-state:paused;
+  pointer-events:none;
+  z-index:-1;
+}
+.btn-trace.fx-on::before{animation-play-state:running}
+@keyframes btn-trace-spin{to{--btn-trace-angle:360deg}}
+
+/* --- 2. Respirar + sonar (CTA final "Quero solicitar meu site") ---------- */
+/* Usa a propriedade "scale", não transform: assim o deslocamento magnético,
+   que escreve "translate", compõe em vez de ser sobrescrito pela animação. */
+.btn-pulse{
+  position:relative;isolation:isolate;
+  animation:btn-breathe 2.2s ease-in-out infinite;
+  animation-play-state:paused;
+}
+.btn-pulse.fx-on{animation-play-state:running}
+.btn-pulse:hover{transform:none}   /* o respiro já dá o movimento */
+.btn-pulse::before{
+  content:"";
+  position:absolute;inset:0;
+  border-radius:inherit;
+  background:var(--color-primary);
+  /* borda difusa para o anel ler como brilho (o --shadow-glow-green do design
+     system) e não como uma placa sólida. Remova esta linha para o anel duro. */
+  filter:blur(8px);
+  animation:btn-sonar 2.2s ease-out infinite;
+  animation-play-state:paused;
+  pointer-events:none;
+  z-index:-1;
+}
+.btn-pulse.fx-on::before{animation-play-state:running}
+@keyframes btn-breathe{0%,100%{scale:1}50%{scale:1.045}}
+@keyframes btn-sonar{from{opacity:.5;scale:1}to{opacity:0;scale:1.35}}
+
+/* --- 3. Shimmer em loop + ripple no toque (botões secundários) ----------- */
+.btn-shimmer{
+  position:relative;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-shimmer::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:40%;height:100%;
+  background:linear-gradient(120deg,transparent 0%,rgba(109,94,240,.35) 50%,transparent 100%);
+  transform:skewX(-20deg);
+  /* anima "translate" e não "left": sem recalcular layout a cada quadro */
+  translate:-150% 0;
+  animation:btn-shimmer-sweep 4s ease-in-out infinite;
+  animation-play-state:paused;
+  pointer-events:none;
+}
+.btn-shimmer.fx-on::before{animation-play-state:running}
+@keyframes btn-shimmer-sweep{
+  0%{translate:-150% 0}
+  35%{translate:325% 0}
+  100%{translate:325% 0}
+}
+.btn-shimmer .ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(109,94,240,.35);
+  scale:0;
+  pointer-events:none;
+  animation:btn-ripple .6s ease-out forwards;
+}
+@keyframes btn-ripple{to{scale:3;opacity:0}}
+
+/* O anel e o sonar cercam o botão, então o foco recua para não colidir */
+.btn-trace:focus-visible,.btn-pulse:focus-visible{outline-offset:6px}
+
+/* ==========================================================================
    6. HEADER
    ========================================================================== */
 .site-header{
@@ -1116,6 +1227,8 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   .js .plan-badge[data-pulse],.js .plan--highlight.is-visible,
   .js .step-card.is-visible .step-number span{animation:none}
   .scroll-progress,.steps-track,.end-dim{display:none}
+  .btn-trace::before,.btn-pulse::before,.btn-shimmer::before{display:none}
+  .btn-pulse{animation:none;scale:1}
   .site-header.is-compact .header-inner{min-height:var(--header-h)}
 }
 
@@ -1172,7 +1285,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
       </ul>
     </nav>
 
-    <a class="btn btn-primary header-cta" href="https://wa.me/5500000000000">
+    <a class="btn btn-primary btn-trace header-cta" href="https://wa.me/5500000000000">
       Quero meu site <span class="arrow" aria-hidden="true">→</span>
     </a>
 
@@ -1193,7 +1306,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <li><a href="#precos">Preço</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
-      <a class="btn btn-primary btn-block" href="https://wa.me/5500000000000">
+      <a class="btn btn-primary btn-trace btn-block" href="https://wa.me/5500000000000">
         Quero meu site <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
@@ -1233,10 +1346,10 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         </p>
 
         <div class="hero-actions reveal" style="--i:4">
-          <a class="btn btn-primary btn-lg" href="https://wa.me/5500000000000">
+          <a class="btn btn-primary btn-trace btn-lg" href="https://wa.me/5500000000000">
             Quero meu site <span class="arrow" aria-hidden="true">→</span>
           </a>
-          <a class="btn btn-secondary" href="#portfolio">Veja o que já entregamos</a>
+          <a class="btn btn-secondary btn-shimmer" href="#portfolio">Veja o que já entregamos</a>
         </div>
       </div>
 
@@ -1246,7 +1359,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <p class="price-terms">
           <span>Pagamento único</span><span aria-hidden="true">·</span><span>Sem mensalidade</span>
         </p>
-        <a class="btn btn-primary btn-block" href="https://wa.me/5500000000000">
+        <a class="btn btn-primary btn-trace btn-block" href="https://wa.me/5500000000000">
           Quero meu site <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
@@ -1444,7 +1557,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 
           <div class="features-cta">
             <h2 id="beneficios-title">Tudo pra sua empresa <span class="em-brand">estar online</span>.</h2>
-            <a class="btn btn-primary btn-lg" href="https://wa.me/5500000000000">
+            <a class="btn btn-primary btn-trace btn-lg" href="https://wa.me/5500000000000">
               QUERO MEU SITE <span class="arrow" aria-hidden="true">→</span>
             </a>
           </div>
@@ -1546,7 +1659,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
             <li class="reveal" style="--i:2"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>pagamento único</li>
             <li class="reveal" style="--i:3"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>mesmo resultado profissional</li>
           </ul>
-          <a class="btn btn-primary btn-block" href="https://wa.me/5500000000000">
+          <a class="btn btn-primary btn-trace btn-block" href="https://wa.me/5500000000000">
             Quero garantir <span class="arrow" aria-hidden="true">→</span>
           </a>
         </article>
@@ -1689,7 +1802,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <h2 id="cta-final-title">Seu próximo cliente vai <span class="em-brand">pesquisar sua empresa</span>.</h2>
         <p>Garanta uma presença profissional com um site moderno, rápido e pronto em poucos dias.</p>
         <p class="final-price">Apenas R$ 500</p>
-        <a class="btn btn-primary btn-lg" data-magnetic href="https://wa.me/5500000000000">
+        <a class="btn btn-primary btn-lg btn-pulse" data-magnetic href="https://wa.me/5500000000000">
           Quero solicitar meu site <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
@@ -1930,9 +2043,12 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
       var radius = 90, frame = null;
 
+      /* Escreve em "translate", não em "transform": o CTA final também roda a
+         animação de respiro, e animação CSS vence estilo inline. Como "scale"
+         e "translate" são propriedades independentes, as duas convivem. */
       function reset() {
         if (frame) { cancelAnimationFrame(frame); frame = null; }
-        btn.style.transform = '';
+        btn.style.translate = '';
       }
 
       window.addEventListener('pointermove', function (e) {
@@ -1944,10 +2060,10 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
           var dy = e.clientY - (r.top + r.height / 2);
           var dist = Math.hypot(dx, dy);
           var reach = Math.max(r.width, r.height) / 2 + radius;
-          if (dist > reach) { btn.style.transform = ''; return; }
+          if (dist > reach) { btn.style.translate = ''; return; }
           var pull = 0.28 * (1 - dist / reach);
-          btn.style.transform = 'translate3d(' + (dx * pull).toFixed(1) + 'px,' +
-                                (dy * pull).toFixed(1) + 'px,0)';
+          btn.style.translate = (dx * pull).toFixed(1) + 'px ' +
+                                (dy * pull).toFixed(1) + 'px';
         });
       }, { passive: true });
 
@@ -1997,6 +2113,49 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     }, { threshold: 0.45 });
 
     demoObserver.observe(compare);
+  }
+
+  /* ------------------------------------------------------------------
+     Animações dos botões: só rodam quando o botão está perto da tela.
+     Fora dela ficam pausadas, então nada é repintado durante o scroll.
+     ------------------------------------------------------------------ */
+  var fxButtons = document.querySelectorAll('.btn-trace, .btn-pulse, .btn-shimmer');
+
+  if (fxButtons.length && !reduceMotion && 'IntersectionObserver' in window) {
+    var fxObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('fx-on', entry.isIntersecting);
+      });
+    }, { rootMargin: '80px' });
+
+    fxButtons.forEach(function (el) { fxObserver.observe(el); });
+  }
+
+  /* ------------------------------------------------------------------
+     Ripple no toque dos botões secundários: a onda nasce no ponto exato
+     tocado e se remove sozinha ao fim da animação.
+     ------------------------------------------------------------------ */
+  if (!reduceMotion) {
+    document.querySelectorAll('.btn-shimmer').forEach(function (btn) {
+      btn.addEventListener('pointerdown', function (e) {
+        var rect = btn.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height);
+        var ripple = document.createElement('span');
+
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        btn.appendChild(ripple);
+
+        ripple.addEventListener('animationend', function () {
+          ripple.remove();
+        }, { once: true });
+        /* rede de segurança: se o animationend não disparar (aba em segundo
+           plano, por exemplo), a onda não fica presa no botão */
+        setTimeout(function () { ripple.remove(); }, 1000);
+      });
+    });
   }
 })();
 </script>
