@@ -893,7 +893,8 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   background:var(--color-bg-dark);
   color:var(--color-text-on-dark);
   padding-block:var(--space-6);
-  margin-top:var(--section-y);
+  /* Sem margem aqui: o espaço vem do padding de #contato, para que a camada
+     de escurecimento chegue colada ao rodapé, sem faixa clara no meio. */
 }
 .footer-inner{display:flex;flex-direction:column;gap:var(--space-5)}
 .site-footer .logo-name{color:var(--color-text-on-dark)}
@@ -930,13 +931,130 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 }
 .js .reveal.is-visible{opacity:1;transform:none}
 
+/* Texto só para leitor de tela — usado onde o número anima na tela */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+/* --- Barra de progresso de leitura ------------------------------------ */
+.scroll-progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;
+}
+.scroll-progress-fill{
+  display:block;height:100%;width:100%;
+  transform:scaleX(var(--p,0));transform-origin:left center;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-primary));
+}
+
+/* --- Header que encolhe no scroll -------------------------------------- */
+.site-header{transition:box-shadow var(--transition),background-color var(--transition)}
+.site-header .header-inner{transition:min-height 220ms ease-out,padding-block 220ms ease-out}
+.site-header .logo-mark{transition:width 220ms ease-out}
+.site-header.is-compact .header-inner{min-height:56px;padding-block:var(--space-1)}
+.site-header.is-compact .logo-mark{width:31px}
+.site-header.is-compact{box-shadow:var(--shadow-sm);background:rgba(243,241,236,.93)}
+
+/* --- Blobs do hero ------------------------------------------------------ */
+.hero{position:relative;isolation:isolate}
+.hero-blobs{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.blob{
+  position:absolute;display:block;border-radius:50%;
+  filter:blur(60px);opacity:.5;
+  will-change:transform;
+}
+.blob-1{width:44vmax;height:44vmax;top:-16vmax;right:-12vmax;background:rgba(139,127,245,.45)}
+.blob-2{width:30vmax;height:30vmax;top:24vmax;left:-14vmax;background:rgba(109,94,240,.28)}
+.blob-3{width:22vmax;height:22vmax;bottom:-10vmax;right:18vmax;background:rgba(215,250,60,.20)}
+.js .blob-1{animation:drift-a 26s ease-in-out infinite}
+.js .blob-2{animation:drift-b 32s ease-in-out infinite}
+.js .blob-3{animation:drift-a 38s ease-in-out infinite reverse}
+@keyframes drift-a{
+  0%,100%{translate:0 0;scale:1}
+  50%{translate:-4% 5%;scale:1.08}
+}
+@keyframes drift-b{
+  0%,100%{translate:0 0;scale:1}
+  50%{translate:6% -4%;scale:.94}
+}
+
+/* --- Portfólio: entrada lateral alternada + tilt 3D --------------------- */
+/* O deslocamento lateral inicial nunca pode passar da margem da página, senão
+   vira scroll horizontal. A magnitude acompanha a margem de cada breakpoint,
+   e o clip no eixo X protege navegadores que não suportarem o cálculo. */
+#portfolio{overflow-x:clip}
+.portfolio-grid{perspective:1000px;--dx-mag:18px}
+.js .portfolio-grid > li.reveal{transform:translate3d(var(--dx,0),20px,0)}
+.portfolio-grid > li:nth-child(odd){--dx:calc(-1 * var(--dx-mag))}
+.portfolio-grid > li:nth-child(even){--dx:var(--dx-mag)}
+.project-card{transform-style:preserve-3d}
+.project-card.is-tilting{transition:none}   /* o rAF conduz durante o tilt */
+
+/* --- Comparativo: "pop" do card destacado ------------------------------ */
+@keyframes plan-pop{
+  0%{transform:scale(.96)}
+  60%{transform:scale(1.02)}
+  100%{transform:scale(1)}
+}
+.js .plan--highlight.is-visible{animation:plan-pop 620ms ease-out both}
+
+/* --- Selo: pulsar suave ------------------------------------------------- */
+@keyframes badge-pulse{
+  0%,72%,100%{transform:scale(1)}
+  80%{transform:scale(1.03)}
+}
+.js .plan-badge[data-pulse]{animation:badge-pulse 3.4s ease-in-out infinite}
+
+/* --- Passos: trilha que preenche + zoom nos números --------------------- */
+.steps-wrap{position:relative}
+.steps-track{
+  position:absolute;left:11px;top:8px;bottom:8px;width:3px;
+  border-radius:var(--radius-full);background:var(--color-border);overflow:hidden;
+}
+.steps-track-fill{
+  display:block;width:100%;height:100%;
+  background:linear-gradient(180deg,var(--color-brand),var(--color-primary));
+  transform:scaleY(var(--p,0));transform-origin:top center;
+}
+.steps-wrap .steps-grid{position:relative}
+@keyframes num-zoom{from{transform:scale(.72);opacity:0}to{transform:scale(1);opacity:1}}
+.step-number span{display:inline-block}
+.js .step-card.is-visible .step-number span{animation:num-zoom 460ms 160ms ease-out both}
+
+/* --- Chips: entrada em sequência ---------------------------------------- */
+.js .audience-list > li.reveal{transform:translate3d(0,16px,0) scale(.94)}
+.js .audience-list > li.reveal.is-visible{transform:none}
+
+/* --- Escurecimento no fim da página ------------------------------------- */
+#contato{position:relative}
+.end-dim{
+  /* inset:0 de propósito: qualquer transbordo para baixo viraria altura de
+     scroll fantasma, e o gradiente já nasce transparente no topo da seção. */
+  position:absolute;inset:0;z-index:-1;pointer-events:none;
+  /* termina quase no tom do rodapé para não deixar degrau na emenda */
+  background:linear-gradient(180deg,transparent 0%,rgba(20,20,20,.32) 55%,rgba(20,20,20,.94) 100%);
+  opacity:var(--dim,0);
+  transition:opacity 120ms linear;
+}
+
+/* --- Botão magnético ----------------------------------------------------- */
+.btn[data-magnetic]{will-change:transform}
+
 /* ==========================================================================
    20. BREAKPOINTS
    ========================================================================== */
 
 /* Tablet — 481px+ (2 colunas em cards/grids) */
+/* A trilha só aparece onde de fato conecta a sequência: vertical na coluna
+   única e horizontal na fileira de 4. No 2x2 do tablet uma linha só não
+   representa a ordem, então ela sai. */
+.steps-wrap .steps-grid{padding-left:34px}
+
 @media (min-width:481px){
   :root{--gutter:var(--space-5);--section-y:80px}
+  .portfolio-grid{--dx-mag:26px}
+  .steps-track{display:none}
+  .steps-wrap .steps-grid{padding-left:0}
   .portfolio-grid{grid-template-columns:repeat(2,1fr)}
   .steps-grid{grid-template-columns:repeat(2,1fr)}
   .features-list{grid-template-columns:repeat(2,1fr)}
@@ -947,6 +1065,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 /* Tablet largo / desktop pequeno — 768px+ */
 @media (min-width:768px){
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
+  .portfolio-grid{--dx-mag:34px}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
   .price-card{padding:var(--space-6)}
@@ -960,6 +1079,15 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   .hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:var(--space-7)}
   .portfolio-grid{grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
   .steps-grid{grid-template-columns:repeat(4,1fr)}
+  .steps-track{
+    display:block;
+    left:0;right:0;top:10px;bottom:auto;width:auto;height:3px;
+  }
+  .steps-track-fill{
+    background:linear-gradient(90deg,var(--color-brand),var(--color-primary));
+    transform:scaleX(var(--p,0));transform-origin:left center;
+  }
+  .steps-wrap .steps-grid{padding-left:0;padding-top:36px}
   .features-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:center;gap:var(--space-8)}
   .panel-dark{padding:var(--space-8) var(--space-7)}
   .guarantee{padding:var(--space-8) var(--space-7)}
@@ -988,6 +1116,12 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   }
   .js .reveal{opacity:1;transform:none}
   .marquee-track{animation:none}
+  /* Nada de deriva, pulsar, pop, zoom ou escurecimento progressivo */
+  .js .blob-1,.js .blob-2,.js .blob-3,
+  .js .plan-badge[data-pulse],.js .plan--highlight.is-visible,
+  .js .step-card.is-visible .step-number span{animation:none}
+  .scroll-progress,.steps-track,.end-dim{display:none}
+  .site-header.is-compact .header-inner{min-height:var(--header-h)}
 }
 
 /* Impressão */
@@ -1003,6 +1137,9 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 <script>document.documentElement.classList.add('js');</script>
 
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<!-- Progresso de leitura da página (decorativo) -->
+<div class="scroll-progress" aria-hidden="true"><span class="scroll-progress-fill"></span></div>
 
 <!-- ==========================================================================
      HEADER
@@ -1074,6 +1211,14 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
        1. HERO
        ====================================================================== -->
   <section class="hero" id="inicio" aria-labelledby="hero-title">
+
+    <!-- Blobs de fundo: deriva lenta + parallax leve no scroll (decorativo) -->
+    <div class="hero-blobs" aria-hidden="true">
+      <span class="blob blob-1" data-parallax="0.06"></span>
+      <span class="blob blob-2" data-parallax="0.11"></span>
+      <span class="blob blob-3" data-parallax="0.04"></span>
+    </div>
+
     <div class="container hero-grid">
 
       <div class="hero-copy">
@@ -1337,28 +1482,31 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <h2 id="como-funciona-title">Do pedido ao site no ar <span class="em-brand">em 4 passos</span>.</h2>
       </div>
 
-      <ol class="steps-grid">
+      <div class="steps-wrap">
+        <div class="steps-track" aria-hidden="true"><span class="steps-track-fill"></span></div>
+        <ol class="steps-grid">
         <li class="step-card reveal" style="--i:0">
-          <span class="step-number" aria-hidden="true">01</span>
+          <span class="step-number" aria-hidden="true"><span>01</span></span>
           <h3>Faça seu pedido</h3>
           <p>Clique no botão e fale com a gente pelo WhatsApp.</p>
         </li>
         <li class="step-card reveal" style="--i:1">
-          <span class="step-number" aria-hidden="true">02</span>
+          <span class="step-number" aria-hidden="true"><span>02</span></span>
           <h3>Envie as informações</h3>
           <p>Você compartilha os dados da empresa, logo e referências.</p>
         </li>
         <li class="step-card reveal" style="--i:2">
-          <span class="step-number" aria-hidden="true">03</span>
+          <span class="step-number" aria-hidden="true"><span>03</span></span>
           <h3>Desenvolvimento</h3>
           <p>Nossa equipe cria todo o site pra você.</p>
         </li>
         <li class="step-card reveal" style="--i:3">
-          <span class="step-number" aria-hidden="true">04</span>
+          <span class="step-number" aria-hidden="true"><span>04</span></span>
           <h3>Entrega</h3>
           <p>Em até 2 dias úteis seu site está no ar.</p>
         </li>
-      </ol>
+        </ol>
+      </div>
 
     </div>
   </section>
@@ -1378,27 +1526,30 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <article class="plan plan--base reveal" style="--i:0">
           <div class="plan-head">
             <h3 class="plan-name">Agência Tradicional</h3>
-            <p class="plan-price"><span data-countup="2500" data-prefix="R$ ">R$ 2.500</span></p>
+            <p class="plan-price"><span class="sr-only">R$ 2.500</span><span aria-hidden="true" data-countup="2500" data-prefix="R$ ">R$ 2.500</span></p>
           </div>
           <ul class="plan-list">
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>prazo pode passar de um mês</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>processo mais demorado</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>alto investimento</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>mesma entrega final</li>
+            <li class="reveal" style="--i:0"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>prazo pode passar de um mês</li>
+            <li class="reveal" style="--i:1"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>processo mais demorado</li>
+            <li class="reveal" style="--i:2"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>alto investimento</li>
+            <li class="reveal" style="--i:3"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg></span>mesma entrega final</li>
           </ul>
         </article>
 
         <article class="plan plan--highlight on-dark reveal" style="--i:1">
           <div class="plan-head">
-            <p class="plan-badge">Até 80% mais econômico</p>
+            <p class="plan-badge" data-pulse>
+            <span class="sr-only">Até 80% mais econômico</span>
+            <span aria-hidden="true">Até <span data-countup="80" data-suffix="%">80%</span> mais econômico</span>
+          </p>
             <h3 class="plan-name">Criar Estúdio</h3>
-            <p class="plan-price"><span data-countup="500" data-prefix="R$ ">R$ 500</span></p>
+            <p class="plan-price"><span class="sr-only">R$ 500</span><span aria-hidden="true" data-countup="500" data-prefix="R$ ">R$ 500</span></p>
           </div>
           <ul class="plan-list">
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>entrega em até 2 dias úteis</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>processo simples</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>pagamento único</li>
-            <li><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>mesmo resultado profissional</li>
+            <li class="reveal" style="--i:0"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>entrega em até 2 dias úteis</li>
+            <li class="reveal" style="--i:1"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>processo simples</li>
+            <li class="reveal" style="--i:2"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>pagamento único</li>
+            <li class="reveal" style="--i:3"><span class="mark" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>mesmo resultado profissional</li>
           </ul>
           <a class="btn btn-primary btn-block" href="https://wa.me/5500000000000">
             Quero garantir <span class="arrow" aria-hidden="true">→</span>
@@ -1439,16 +1590,16 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <h2 id="para-quem-title">Feito pra quem quer <span class="em-brand">presença profissional</span>.</h2>
       </div>
 
-      <ul class="audience-list reveal">
-        <li>Empresas sem site</li>
-        <li>Sites antigos ou desatualizados</li>
-        <li>Profissionais liberais</li>
-        <li>Clínicas</li>
-        <li>Escritórios</li>
-        <li>Restaurantes</li>
-        <li>Imobiliárias</li>
-        <li>Prestadores de serviço</li>
-        <li>Pequenos negócios</li>
+      <ul class="audience-list">
+        <li class="reveal" style="--i:0">Empresas sem site</li>
+        <li class="reveal" style="--i:1">Sites antigos ou desatualizados</li>
+        <li class="reveal" style="--i:2">Profissionais liberais</li>
+        <li class="reveal" style="--i:3">Clínicas</li>
+        <li class="reveal" style="--i:4">Escritórios</li>
+        <li class="reveal" style="--i:5">Restaurantes</li>
+        <li class="reveal" style="--i:6">Imobiliárias</li>
+        <li class="reveal" style="--i:7">Prestadores de serviço</li>
+        <li class="reveal" style="--i:8">Pequenos negócios</li>
       </ul>
 
     </div>
@@ -1537,12 +1688,13 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
        11. CTA FINAL
        ====================================================================== -->
   <section class="section" id="contato" aria-labelledby="cta-final-title">
+    <span class="end-dim" aria-hidden="true"></span>
     <div class="container">
       <div class="final-cta on-dark reveal">
         <h2 id="cta-final-title">Seu próximo cliente vai <span class="em-brand">pesquisar sua empresa</span>.</h2>
         <p>Garanta uma presença profissional com um site moderno, rápido e pronto em poucos dias.</p>
         <p class="final-price">Apenas R$ 500</p>
-        <a class="btn btn-primary btn-lg" href="https://wa.me/5500000000000">
+        <a class="btn btn-primary btn-lg" data-magnetic href="https://wa.me/5500000000000">
           Quero solicitar meu site <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
@@ -1620,16 +1772,17 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
      ------------------------------------------------------------------ */
   var compare = document.getElementById('compare');
   var range = document.getElementById('compareRange');
+  var setPosition = null;   /* escopo da IIFE: a demo automática usa isso adiante */
 
   if (compare && range) {
     var divider = compare.querySelector('.compare-divider');
 
-    function setPosition(value) {
+    setPosition = function (value) {
       var pct = Math.min(100, Math.max(0, Number(value)));
       compare.style.setProperty('--pos', pct + '%');
       if (divider) divider.style.left = pct + '%';
       range.setAttribute('aria-valuetext', Math.round(pct) + '% do novo site visível');
-    }
+    };
 
     range.addEventListener('input', function () { setPosition(range.value); });
     setPosition(range.value);
@@ -1670,6 +1823,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         var el = entry.target;
         var target = Number(el.getAttribute('data-countup'));
         var prefix = el.getAttribute('data-prefix') || '';
+        var suffix = el.getAttribute('data-suffix') || '';
         var start = null;
         var duration = 900;
 
@@ -1677,7 +1831,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
           if (start === null) start = now;
           var progress = Math.min((now - start) / duration, 1);
           var eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = prefix + format.format(Math.round(target * eased));
+          el.textContent = prefix + format.format(Math.round(target * eased)) + suffix;
           if (progress < 1) requestAnimationFrame(tick);
         }
 
@@ -1687,6 +1841,167 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     }, { threshold: 0.5 });
 
     counters.forEach(function (el) { countObserver.observe(el); });
+  }
+
+  /* ------------------------------------------------------------------
+     Um único handler de scroll, agendado por requestAnimationFrame:
+     progresso de leitura, header compacto, parallax dos blobs,
+     preenchimento da trilha dos passos e escurecimento do fim.
+     ------------------------------------------------------------------ */
+  var header = document.querySelector('.site-header');
+  var progressFill = document.querySelector('.scroll-progress-fill');
+  var stepsTrack = document.querySelector('.steps-track');
+  var stepsWrap = document.querySelector('.steps-wrap');
+  var endDim = document.querySelector('.end-dim');
+  var contato = document.getElementById('contato');
+  var blobs = reduceMotion ? [] : Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+  var ticking = false;
+
+  function clamp01(n) { return n < 0 ? 0 : n > 1 ? 1 : n; }
+
+  function onScroll() {
+    var y = window.pageYOffset;
+    var vh = window.innerHeight;
+
+    if (header) header.classList.toggle('is-compact', y > 48);
+
+    if (progressFill) {
+      var max = document.documentElement.scrollHeight - vh;
+      progressFill.style.setProperty('--p', max > 0 ? clamp01(y / max) : 0);
+    }
+
+    for (var i = 0; i < blobs.length; i++) {
+      var speed = parseFloat(blobs[i].getAttribute('data-parallax')) || 0;
+      blobs[i].style.transform = 'translate3d(0,' + (y * speed).toFixed(1) + 'px,0)';
+    }
+
+    /* A trilha preenche conforme os cards de passo cruzam a tela */
+    if (stepsTrack && stepsWrap) {
+      var r = stepsWrap.getBoundingClientRect();
+      var span = r.height + vh * 0.5;
+      stepsTrack.style.setProperty('--p', span > 0 ? clamp01((vh * 0.85 - r.top) / span) : 0);
+    }
+
+    /* O fundo escurece à medida que o bloco final se aproxima */
+    if (endDim && contato) {
+      var c = contato.getBoundingClientRect();
+      endDim.style.setProperty('--dim', clamp01((vh - c.top) / (vh * 0.9)));
+    }
+
+    ticking = false;
+  }
+
+  function requestScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }
+
+  window.addEventListener('scroll', requestScroll, { passive: true });
+  window.addEventListener('resize', requestScroll, { passive: true });
+  onScroll();
+
+  /* ------------------------------------------------------------------
+     Efeitos de ponteiro fino (mouse/trackpad): tilt 3D e botão magnético.
+     Ficam de fora no toque e sob prefers-reduced-motion.
+     ------------------------------------------------------------------ */
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (finePointer && !reduceMotion) {
+
+    document.querySelectorAll('.project-card').forEach(function (card) {
+      var frame = null;
+
+      card.addEventListener('pointermove', function (e) {
+        if (frame) return;
+        frame = requestAnimationFrame(function () {
+          frame = null;
+          var r = card.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width - 0.5;
+          var py = (e.clientY - r.top) / r.height - 0.5;
+          card.classList.add('is-tilting');
+          card.style.transform =
+            'perspective(1000px) translateY(-4px)' +
+            ' rotateX(' + (-py * 7).toFixed(2) + 'deg)' +
+            ' rotateY(' + (px * 7).toFixed(2) + 'deg)';
+        });
+      });
+
+      card.addEventListener('pointerleave', function () {
+        if (frame) { cancelAnimationFrame(frame); frame = null; }
+        card.classList.remove('is-tilting');
+        card.style.transform = '';
+      });
+    });
+
+    document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
+      var radius = 90, frame = null;
+
+      function reset() {
+        if (frame) { cancelAnimationFrame(frame); frame = null; }
+        btn.style.transform = '';
+      }
+
+      window.addEventListener('pointermove', function (e) {
+        if (frame) return;
+        frame = requestAnimationFrame(function () {
+          frame = null;
+          var r = btn.getBoundingClientRect();
+          var dx = e.clientX - (r.left + r.width / 2);
+          var dy = e.clientY - (r.top + r.height / 2);
+          var dist = Math.hypot(dx, dy);
+          var reach = Math.max(r.width, r.height) / 2 + radius;
+          if (dist > reach) { btn.style.transform = ''; return; }
+          var pull = 0.28 * (1 - dist / reach);
+          btn.style.transform = 'translate3d(' + (dx * pull).toFixed(1) + 'px,' +
+                                (dy * pull).toFixed(1) + 'px,0)';
+        });
+      }, { passive: true });
+
+      /* O deslocamento nunca pode sobreviver ao foco por teclado ou ao clique */
+      btn.addEventListener('blur', reset);
+      btn.addEventListener('focus', reset);
+      window.addEventListener('blur', reset);
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     Demonstração do comparador: ao entrar na tela, a barra varre uma vez
+     sozinha, mostrando que dá pra arrastar. Qualquer toque cancela.
+     ------------------------------------------------------------------ */
+  if (compare && range && !reduceMotion && 'IntersectionObserver' in window) {
+    var demoRunning = false;
+
+    function cancelDemo() { demoRunning = false; }
+    ['pointerdown', 'keydown', 'input'].forEach(function (ev) {
+      compare.addEventListener(ev, cancelDemo, { once: true });
+    });
+
+    var demoObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        demoObserver.unobserve(entry.target);
+
+        demoRunning = true;
+        var t0 = null, duration = 2000;
+
+        function sweep(now) {
+          if (!demoRunning) return;
+          if (t0 === null) t0 = now;
+          var t = Math.min((now - t0) / duration, 1);
+          /* meia onda suave: 50 → 74 → 26 → 50 */
+          var pos = 50 + 24 * Math.sin(t * Math.PI * 2);
+          range.value = pos;
+          setPosition(pos);
+          if (t < 1) requestAnimationFrame(sweep);
+          else demoRunning = false;
+        }
+
+        setTimeout(function () {
+          if (demoRunning) requestAnimationFrame(sweep);
+        }, 450);
+      });
+    }, { threshold: 0.45 });
+
+    demoObserver.observe(compare);
   }
 })();
 </script>
