@@ -537,7 +537,9 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   border:1px solid var(--color-brand);
   border-radius:var(--radius-full);
   color:var(--color-brand-text);
-  background:rgba(109,94,240,.06);
+  /* sólido de propósito: sobre o vídeo, um fundo translúcido faria o
+     contraste do texto oscilar junto com os quadros */
+  background:#EFECFD;
 }
 .tag::before{
   content:"";width:8px;height:8px;border-radius:50%;
@@ -1087,16 +1089,22 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   inset:0;
   z-index:-1;
   pointer-events:none;
-  /* 82% de creme: medido contra o quadro mais escuro do vídeo para manter
-     WCAG AA em todos os textos do hero. O degradê no rodapé só aumenta a
-     opacidade, então o contraste nunca piora, e emenda com a seção seguinte. */
+  /* 50% de creme: deixa o vídeo aparecer de verdade. Só foi possível abrir
+     tanto porque o tag ganhou fundo sólido e o texto de apoio escureceu —
+     eram os dois que travavam o contraste. Medido em pixels renderizados
+     contra o quadro mais escuro do vídeo. O degradê no rodapé apenas
+     aumenta a opacidade, então nunca piora o contraste. */
   background:
     linear-gradient(to bottom,rgba(243,241,236,0) 68%,var(--color-bg-light) 100%),
-    rgba(243,241,236,.82);
+    rgba(243,241,236,var(--hero-overlay-alpha,.50));
 }
-/* O creme deixou de ser o fundo real atrás deste texto: o cinza escurece
-   para seguir em AA sobre o pior quadro (4.5:1 exige no máximo #626262). */
-.hero-support{color:#5A5A5A}
+/* O creme deixou de ser o fundo real atrás deste texto: com o overlay a 50%
+   o AA exige no máximo #505050 sobre o pior quadro; #464646 dá margem. */
+.hero-support{color:#464646}
+/* A borda cinza padrão desaparece sobre o vídeo e o botão deixa de parecer
+   botão. O roxo escuro rende 3.4:1 contra o quadro mais claro, cumprindo o
+   contraste de componente — e o design system já prevê borda roxa aqui. */
+.hero .btn-secondary{border-color:var(--color-brand-text)}
 
 /* --- Blobs do hero ------------------------------------------------------ */
 .hero{position:relative;isolation:isolate}
