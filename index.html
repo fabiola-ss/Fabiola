@@ -1061,9 +1061,46 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 .site-header.is-compact .logo-mark{width:31px}
 .site-header.is-compact{box-shadow:var(--shadow-sm);background:rgba(243,241,236,.93)}
 
+/* --- Vídeo de fundo do hero --------------------------------------------- */
+/* Empilhamento dentro do hero: vídeo (-2) → blobs (-1) → conteúdo.
+   O wrapper é absoluto e já nasce com o tamanho do hero, então o vídeo não
+   provoca nenhum deslocamento de layout ao carregar. */
+.hero-media{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  z-index:-3;
+  pointer-events:none;
+}
+.hero-video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+/* Sem JS o vídeo já aparece; com JS ele entra suave quando o 1º quadro
+   está pronto — até lá o hero fica idêntico ao que era antes. */
+.js .hero-video{opacity:0;transition:opacity 700ms ease-out}
+.js .hero-video.is-ready{opacity:1}
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  /* 82% de creme: medido contra o quadro mais escuro do vídeo para manter
+     WCAG AA em todos os textos do hero. O degradê no rodapé só aumenta a
+     opacidade, então o contraste nunca piora, e emenda com a seção seguinte. */
+  background:
+    linear-gradient(to bottom,rgba(243,241,236,0) 68%,var(--color-bg-light) 100%),
+    rgba(243,241,236,.82);
+}
+/* O creme deixou de ser o fundo real atrás deste texto: o cinza escurece
+   para seguir em AA sobre o pior quadro (4.5:1 exige no máximo #626262). */
+.hero-support{color:#5A5A5A}
+
 /* --- Blobs do hero ------------------------------------------------------ */
 .hero{position:relative;isolation:isolate}
-.hero-blobs{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.hero-blobs{position:absolute;inset:0;overflow:hidden;z-index:-2;pointer-events:none}
 .blob{
   position:absolute;display:block;border-radius:50%;
   filter:blur(60px);opacity:.5;
@@ -1226,7 +1263,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   .js .blob-1,.js .blob-2,.js .blob-3,
   .js .plan-badge[data-pulse],.js .plan--highlight.is-visible,
   .js .step-card.is-visible .step-number span{animation:none}
-  .scroll-progress,.steps-track,.end-dim{display:none}
+  .scroll-progress,.steps-track,.end-dim,.hero-media{display:none}
   .btn-trace::before,.btn-pulse::before,.btn-shimmer::before{display:none}
   .btn-pulse{animation:none;scale:1}
   .site-header.is-compact .header-inner{min-height:var(--header-h)}
@@ -1320,12 +1357,24 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
        ====================================================================== -->
   <section class="hero" id="inicio" aria-labelledby="hero-title">
 
+    <!-- Vídeo de fundo (decorativo): atrás de tudo, sem som e sem controles.
+         playsinline é o que permite o autoplay no iOS sem abrir em tela cheia. -->
+    <div class="hero-media" aria-hidden="true">
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
+        <source src="hero-bg.webm" type="video/webm">
+        <source src="hero-bg.mp4" type="video/mp4">
+      </video>
+    </div>
+
     <!-- Blobs de fundo: deriva lenta + parallax leve no scroll (decorativo) -->
     <div class="hero-blobs" aria-hidden="true">
       <span class="blob blob-1" data-parallax="0.06"></span>
       <span class="blob blob-2" data-parallax="0.11"></span>
       <span class="blob blob-3" data-parallax="0.04"></span>
     </div>
+
+    <!-- Overlay por último: cobre vídeo E blobs, garantindo o contraste -->
+    <span class="hero-overlay" aria-hidden="true"></span>
 
     <div class="container hero-grid">
 
@@ -1874,6 +1923,46 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
       toggle.focus();
     }
   });
+
+  /* ------------------------------------------------------------------
+     Vídeo de fundo do hero
+     ------------------------------------------------------------------ */
+  var heroVideo = document.querySelector('.hero-video');
+
+  if (heroVideo) {
+    if (reduceMotion) {
+      /* o CSS já esconde o wrapper; aqui evitamos baixar e decodificar à toa */
+      heroVideo.removeAttribute('autoplay');
+      heroVideo.pause();
+      heroVideo.removeAttribute('src');
+      heroVideo.querySelectorAll('source').forEach(function (s) { s.remove(); });
+    } else {
+      /* iOS só concede autoplay com o mudo confirmado por propriedade */
+      heroVideo.muted = true;
+
+      function heroReady() { heroVideo.classList.add('is-ready'); }
+      if (heroVideo.readyState >= 2) heroReady();
+      else heroVideo.addEventListener('loadeddata', heroReady, { once: true });
+
+      function tryPlay() {
+        var r = heroVideo.play();
+        /* se a política de autoplay recusar, o hero simplesmente segue
+           com o fundo creme de sempre — nada quebra */
+        if (r && r.catch) r.catch(function () {});
+      }
+      tryPlay();
+
+      /* fora da tela o vídeo não precisa decodificar quadro nenhum */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) tryPlay();
+            else heroVideo.pause();
+          });
+        }, { threshold: 0 }).observe(heroVideo);
+      }
+    }
+  }
 
   /* ------------------------------------------------------------------
      Comparador antes/depois
