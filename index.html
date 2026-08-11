@@ -51,6 +51,9 @@
   /* Tipografia */
   --font-heading:'Sora','Poppins','Space Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  /* Serifada do sistema para a ênfase itálica dos títulos */
+  --font-emphasis:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',
+                  'Times New Roman','Liberation Serif',Times,serif;
 
   /* Escala tipográfica — mobile → desktop (valores do design system) */
   --fs-display:clamp(2rem,1.35rem + 3.25vw,3.5rem);   /* 32 → 56 */
@@ -135,7 +138,18 @@ h1{font-size:var(--fs-display);line-height:var(--lh-display);font-weight:700}
 h2{font-size:var(--fs-h2);line-height:var(--lh-h2);font-weight:700}
 h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 
-.em-brand{color:var(--color-brand);font-style:italic}
+/* Ênfase editorial dos títulos: serifada itálica, peso regular, contrastando
+   com a geométrica bold ao redor. Só fontes do sistema (sem dependências). */
+.em-brand{
+  color:var(--color-brand);
+  font-family:var(--font-emphasis);
+  font-style:italic;
+  font-weight:400;
+  letter-spacing:0;
+  font-size:1.05em;   /* compensação óptica: a serifada corre menor que a sans bold */
+}
+/* Sobre blocos escuros o roxo base cai para 3.96:1; o roxo claro dá 5.66:1 */
+.on-dark .em-brand{color:var(--color-brand-light)}
 .text-muted{color:var(--color-text-muted)}
 .body-lg{font-size:var(--fs-body-lg);line-height:var(--lh-body)}
 .lead{max-width:60ch}
@@ -632,18 +646,16 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 /* ==========================================================================
    10. PROBLEMA / SOLUÇÃO
    ========================================================================== */
-.reason-grid{display:grid;gap:var(--space-4);grid-template-columns:1fr}
-.reason-card{
-  background:var(--color-surface);
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-lg);
-  padding:var(--space-5) var(--space-4);
-  box-shadow:var(--shadow-sm);
-  display:flex;flex-direction:column;gap:var(--space-3);
-  transition:transform var(--transition),box-shadow var(--transition);
+/* Bloco editorial: título com ênfase + duas afirmações em texto corrido */
+.reason-block{
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-4);
 }
-.reason-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
-.reason-card:hover .icon-badge{transform:rotate(-6deg) scale(1.06)}
+/* text-wrap normal (não balance) para a 1ª linha encher, como na referência */
+.reason-block h2{max-width:44ch;text-wrap:normal;margin-bottom:var(--space-2)}
+.reason-block p{max-width:74ch}
+
 .icon-badge{
   width:56px;height:56px;
   border-radius:var(--radius-md);
@@ -653,15 +665,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   flex-shrink:0;
   transition:transform var(--transition);
 }
-.reason-card p{font-size:var(--fs-body-lg);font-family:var(--font-heading);font-weight:600;letter-spacing:-.01em;line-height:1.35}
-.reason-card--solution{
-  background:var(--color-bg-dark);
-  border-color:var(--color-bg-dark);
-  color:var(--color-text-on-dark);
-}
-.reason-card--solution .icon-badge{background:rgba(215,250,60,.14);color:var(--color-primary)}
-.reason-step{font-size:var(--fs-caption);letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-muted);font-weight:500}
-.reason-card--solution .reason-step{color:var(--color-primary)}
 
 /* ==========================================================================
    11. BLOCO ESCURO (BENEFÍCIOS)
@@ -921,7 +924,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 @media (min-width:481px){
   :root{--gutter:var(--space-5);--section-y:80px}
   .portfolio-grid{grid-template-columns:repeat(2,1fr)}
-  .reason-grid{grid-template-columns:repeat(2,1fr)}
   .steps-grid{grid-template-columns:repeat(2,1fr)}
   .features-list{grid-template-columns:repeat(2,1fr)}
   .panel-dark,.final-cta,.guarantee{padding-inline:var(--space-6)}
@@ -943,7 +945,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   .hero{padding-block:var(--space-8) var(--space-7)}
   .hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:var(--space-7)}
   .portfolio-grid{grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
-  .reason-grid{grid-template-columns:repeat(3,1fr)}
   .steps-grid{grid-template-columns:repeat(4,1fr)}
   .features-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:center;gap:var(--space-8)}
   .panel-dark{padding:var(--space-8) var(--space-7)}
@@ -1065,7 +1066,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <p class="tag label reveal">Sites profissionais e elegantes</p>
 
         <h1 class="hero-title reveal" id="hero-title" style="--i:1">
-          Seu site profissional <span class="em-brand">em 2 dias.</span>
+          Seu site profissional <span class="em-brand">em 2 dias</span>.
         </h1>
 
         <p class="hero-subtitle reveal" style="--i:2">
@@ -1120,7 +1121,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="portfolio-title">Veja o que já entregamos. <span class="em-brand">O próximo pode ser o seu.</span></h2>
+        <h2 id="portfolio-title">Veja o que já entregamos. <span class="em-brand">O próximo pode ser o seu</span>.</h2>
         <p class="body-lg text-muted lead">
           Conheça alguns sites desenvolvidos para empresas e profissionais de diferentes segmentos.
           Cada projeto foi criado de forma personalizada para atender às necessidades de cada cliente.
@@ -1204,7 +1205,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 
       <div class="section-head reveal">
         <p class="tag label">Antes e depois</p>
-        <h2 id="antes-title">De um site antigo para uma <span class="em-brand">presença digital de verdade.</span></h2>
+        <h2 id="antes-title">De um site antigo para uma <span class="em-brand">presença digital de verdade</span>.</h2>
         <p class="body-lg text-muted lead">
           Arraste a barra para comparar o antes e o depois do site do Airton Rafael.
           Mesmo cliente, novo posicionamento.
@@ -1260,42 +1261,20 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
        ====================================================================== -->
   <section class="section" id="por-que" aria-labelledby="por-que-title">
     <div class="container">
+      <div class="reason-block">
 
-      <h2 class="section-head reveal" id="por-que-title">
-        Antes de comprar, seu cliente <span class="em-brand">pesquisa sua empresa.</span>
-      </h2>
+        <h2 id="por-que-title" class="reveal">
+          Antes de comprar, seu cliente <span class="em-brand">pesquisa</span> sua empresa.
+        </h2>
 
-      <div class="reason-grid">
+        <p class="body-lg text-muted reveal" style="--i:1">
+          Quando ele não encontra um site profissional, a confiança diminui e ele pesquisa o concorrente.
+        </p>
 
-        <article class="reason-card reveal" style="--i:0">
-          <span class="icon-badge" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
-            </svg>
-          </span>
-          <p class="reason-step">Passo 1</p>
-          <p>Antes de comprar, seu cliente pesquisa sua empresa.</p>
-        </article>
-
-        <article class="reason-card reveal" style="--i:1">
-          <span class="icon-badge" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3 3 20h18L12 3Z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/>
-            </svg>
-          </span>
-          <p class="reason-step">Passo 2</p>
-          <p>Quando ele não encontra um site profissional, a confiança diminui e ele pesquisa o concorrente.</p>
-        </article>
-
-        <article class="reason-card reason-card--solution reveal" style="--i:2">
-          <span class="icon-badge" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2.5 4 6v6c0 5 3.4 8.6 8 9.5 4.6-.9 8-4.5 8-9.5V6l-8-3.5Z"/><path d="m9 12 2 2 4-4"/>
-            </svg>
-          </span>
-          <p class="reason-step">A solução</p>
-          <p>Com o Criar Estúdio, sua empresa transmite credibilidade, apresenta seus serviços com clareza e facilita o contato.</p>
-        </article>
+        <p class="body-lg text-muted reveal" style="--i:2">
+          Com o Criar Estúdio, sua empresa transmite credibilidade, apresenta seus serviços com clareza
+          e facilita o contato.
+        </p>
 
       </div>
     </div>
@@ -1310,7 +1289,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
         <div class="features-layout">
 
           <div class="features-cta">
-            <h2 id="beneficios-title">Tudo pra sua empresa <span class="em-brand">estar online.</span></h2>
+            <h2 id="beneficios-title">Tudo pra sua empresa <span class="em-brand">estar online</span>.</h2>
             <a class="btn btn-primary btn-lg" href="https://wa.me/5500000000000">
               QUERO MEU SITE <span class="arrow" aria-hidden="true">→</span>
             </a>
@@ -1341,7 +1320,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="como-funciona-title">Do pedido ao site no ar <span class="em-brand">em 4 passos.</span></h2>
+        <h2 id="como-funciona-title">Do pedido ao site no ar <span class="em-brand">em 4 passos</span>.</h2>
       </div>
 
       <ol class="steps-grid">
@@ -1377,7 +1356,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="precos-title">O mesmo resultado por <span class="em-brand">uma fração do preço.</span></h2>
+        <h2 id="precos-title">O mesmo resultado por <span class="em-brand">uma fração do preço</span>.</h2>
       </div>
 
       <div class="compare-grid">
@@ -1427,7 +1406,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
             <path d="M12 2.5 4 6v6c0 5 3.4 8.6 8 9.5 4.6-.9 8-4.5 8-9.5V6l-8-3.5Z"/><path d="m9 12 2 2 4-4"/>
           </svg>
         </span>
-        <h2 id="garantia-title">Você aprova o site <span class="em-brand">antes de publicar.</span></h2>
+        <h2 id="garantia-title">Você aprova o site <span class="em-brand">antes de publicar</span>.</h2>
         <p>
           Se algo não estiver do jeito que você imaginou, ajustamos até você ficar satisfeito
           — 2 rodadas de ajuste inclusas.
@@ -1443,7 +1422,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="para-quem-title">Feito pra quem quer <span class="em-brand">presença profissional.</span></h2>
+        <h2 id="para-quem-title">Feito pra quem quer <span class="em-brand">presença profissional</span>.</h2>
       </div>
 
       <ul class="audience-list reveal">
@@ -1468,7 +1447,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="faq-title">Tudo o que você <span class="em-brand">precisa saber.</span></h2>
+        <h2 id="faq-title">Tudo o que você <span class="em-brand">precisa saber</span>.</h2>
       </div>
 
       <div class="faq-list">
@@ -1546,7 +1525,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   <section class="section" id="contato" aria-labelledby="cta-final-title">
     <div class="container">
       <div class="final-cta on-dark reveal">
-        <h2 id="cta-final-title">Seu próximo cliente vai <span class="em-brand" style="color:var(--color-brand-light)">pesquisar sua empresa.</span></h2>
+        <h2 id="cta-final-title">Seu próximo cliente vai <span class="em-brand">pesquisar sua empresa</span>.</h2>
         <p>Garanta uma presença profissional com um site moderno, rápido e pronto em poucos dias.</p>
         <p class="final-price">Apenas R$ 500</p>
         <a class="btn btn-primary btn-lg" href="https://wa.me/5500000000000">
