@@ -722,6 +722,9 @@ ul.reel-group{padding-right:var(--space-4)}
    ========================================================================== */
 .compare{
   position:relative;
+  /* No celular o deitado dava uma faixa baixa demais para enxergar um site.
+     Em retrato cabe muito mais página; do tablet para cima volta ao 16/10. */
+  aspect-ratio:3/4;
   border-radius:var(--radius-xl);
   overflow:hidden;
   border:1px solid var(--color-border);
@@ -731,17 +734,35 @@ ul.reel-group{padding-right:var(--space-4)}
   user-select:none;
   -webkit-user-select:none;
 }
-.compare-pane{position:relative;line-height:0}
-.compare-pane img{width:100%;height:auto}
-.compare-pane--before{
-  position:absolute;inset:0;
+/* Cada painel é um contêiner de rolagem próprio com um iframe MUITO alto
+   dentro. Assim quem rola é o contêiner, que é meu — e por ser meu, dá para
+   sincronizar os dois lados. Rolar o documento de dentro do iframe seria
+   impossível de acompanhar por ser outra origem, e o antes/depois
+   dessincronizaria ao primeiro gesto. */
+/* Os DOIS painéis são absolutos: com um deles no fluxo, o iframe de 2600px
+   ditava a altura do card e o aspect-ratio era ignorado — o painel nunca
+   chegava a ser menor que o conteúdo, então não rolava. */
+.compare-pane{position:absolute;inset:0;line-height:0}
+.compare-scroll{
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  /* sem overscroll-behavior:contain de propósito: ao chegar ao fim, a
+     rolagem encadeia para a página e o visitante não fica preso aqui */
+}
+.compare-frame{
+  display:block;
   width:100%;
+  height:2600px;      /* alto o bastante para o site inteiro caber sem rolar por dentro */
+  border:0;
+  background:var(--color-surface);
+}
+.compare-pane--before{
   overflow:hidden;
   clip-path:inset(0 0 0 var(--pos,50%));
 }
-.compare-pane--before img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-}
+
 .compare-badge{
   position:absolute;
   top:var(--space-3);
@@ -756,6 +777,12 @@ ul.reel-group{padding-right:var(--space-4)}
 }
 .compare-badge--after{left:var(--space-3);background:var(--color-primary);color:var(--color-text-primary)}
 .compare-badge--before{right:var(--space-3);background:var(--color-bg-dark);color:var(--color-text-on-dark)}
+/* No celular os dois crachás não cabem lado a lado e se sobrepõem: o do
+   "antes" desce para o rodapé do card, ainda do lado dele. */
+@media (max-width:600px){
+  .compare-badge{font-size:.6875rem;padding:6px 11px}
+  .compare-badge--before{top:auto;bottom:var(--space-3)}
+}
 
 .compare-divider{
   position:absolute;
@@ -783,9 +810,15 @@ ul.reel-group{padding-right:var(--space-4)}
 /* Range nativo por cima: arraste + teclado, acessível */
 .compare-range{
   position:absolute;
-  inset:0;
+  /* Só uma tira no meio, e não a superfície toda: fora dela o painel fica
+     livre para rolar. A largura continua sendo a total, então o valor do
+     range segue mapeando a posição da barra corretamente. */
+  left:0;right:0;
+  top:50%;
+  height:76px;
+  transform:translateY(-50%);
   z-index:5;
-  width:100%;height:100%;
+  width:100%;
   margin:0;
   background:transparent;
   appearance:none;-webkit-appearance:none;
@@ -1268,6 +1301,7 @@ ul.reel-group{padding-right:var(--space-4)}
 /* Tablet largo / desktop pequeno — 768px+ */
 @media (min-width:768px){
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
+  .compare{aspect-ratio:16/10}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
   .price-card{padding:var(--space-6)}
@@ -1673,10 +1707,39 @@ ul.reel-group{padding-right:var(--space-4)}
 
           <!-- Painel "depois" (base) -->
           <div class="compare-pane compare-pane--after">
-            <img loading="lazy" decoding="async" width="1200" height="750"
-                 alt="Depois: novo site do Airton Rafael, com layout moderno, título grande, botão de ação em destaque e visual limpo."
-                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 750'%3E%3Crect width='1200' height='750' fill='%23F3F1EC'/%3E%3Crect x='0' y='0' width='1200' height='84' fill='%23FFFFFF'/%3E%3Crect x='64' y='34' width='150' height='18' rx='9' fill='%236D5EF0'/%3E%3Crect x='700' y='36' width='80' height='12' rx='6' fill='%23C9C6BE'/%3E%3Crect x='810' y='36' width='80' height='12' rx='6' fill='%23C9C6BE'/%3E%3Crect x='920' y='24' width='170' height='40' rx='20' fill='%23D7FA3C'/%3E%3Crect x='64' y='170' width='520' height='40' rx='8' fill='%23141414'/%3E%3Crect x='64' y='232' width='420' height='40' rx='8' fill='%23141414'/%3E%3Crect x='64' y='294' width='330' height='40' rx='8' fill='%236D5EF0'/%3E%3Crect x='64' y='372' width='430' height='12' rx='6' fill='%23A9A6A0'/%3E%3Crect x='64' y='400' width='360' height='12' rx='6' fill='%23A9A6A0'/%3E%3Crect x='64' y='452' width='210' height='52' rx='26' fill='%23D7FA3C'/%3E%3Crect x='650' y='150' width='486' height='400' rx='32' fill='%23FFFFFF'/%3E%3Crect x='690' y='195' width='300' height='22' rx='11' fill='%238B7FF5'/%3E%3Crect x='690' y='245' width='406' height='12' rx='6' fill='%23E4E1DA'/%3E%3Crect x='690' y='275' width='340' height='12' rx='6' fill='%23E4E1DA'/%3E%3Crect x='690' y='330' width='180' height='140' rx='20' fill='%23F3F1EC'/%3E%3Crect x='900' y='330' width='196' height='140' rx='20' fill='%23F3F1EC'/%3E%3Crect x='64' y='600' width='1072' height='110' rx='28' fill='%23141414'/%3E%3Crect x='108' y='640' width='300' height='16' rx='8' fill='%23FFFFFF'/%3E%3Crect x='108' y='672' width='200' height='12' rx='6' fill='%236B6B6B'/%3E%3Crect x='900' y='632' width='190' height='46' rx='23' fill='%23D7FA3C'/%3E%3C/svg%3E">
+            <div class="compare-scroll" data-sync>
+              <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
+                      sandbox="allow-same-origin allow-scripts allow-popups"
+                      title="Depois — novo site do Airton Rafael"
+                      src="https://airtonrafael.com.br/"></iframe>
+            </div>
           </div>
+
+          <!-- Painel "antes" (sobreposto, recortado pela barra) -->
+          <div class="compare-pane compare-pane--before" id="comparePaneBefore">
+            <div class="compare-scroll" data-sync>
+              <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
+                      sandbox="allow-same-origin allow-scripts allow-popups"
+                      title="Antes — site antigo do Airton Rafael"
+                      src="https://airtonrafael.com/"></iframe>
+            </div>
+          </div>
+
+          <p class="compare-badge compare-badge--after">Depois — Novo site</p>
+          <p class="compare-badge compare-badge--before">Antes — Site antigo</p>
+
+          <div class="compare-divider" aria-hidden="true">
+            <span class="compare-handle">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 6 4 12l5 6M15 6l5 6-5 6"/>
+              </svg>
+            </span>
+          </div>
+
+          <input class="compare-range" id="compareRange" type="range" min="0" max="100" step="0.5" value="50"
+                 aria-label="Arraste a bolinha para comparar o antes e o depois do site"
+                 aria-valuetext="Metade do novo site visível">
+        </div>
 
           <!-- Painel "antes" (sobreposto, recortado) -->
           <div class="compare-pane compare-pane--before" id="comparePaneBefore">
@@ -2114,6 +2177,23 @@ ul.reel-group{padding-right:var(--space-4)}
 
     range.addEventListener('input', function () { setPosition(range.value); });
     setPosition(range.value);
+
+    /* Rolar um painel rola o outro na mesma medida: sem isso o antes e o
+       depois sairiam de sincronia e a comparação perderia o sentido.
+       A trava evita o eco de um painel disparar o outro de volta. */
+    var paineis = compare.querySelectorAll('[data-sync]');
+    var sincronizando = false;
+
+    paineis.forEach(function (painel) {
+      painel.addEventListener('scroll', function () {
+        if (sincronizando) return;
+        sincronizando = true;
+        paineis.forEach(function (outro) {
+          if (outro !== painel) outro.scrollTop = painel.scrollTop;
+        });
+        requestAnimationFrame(function () { sincronizando = false; });
+      }, { passive: true });
+    });
   }
 
   /* ------------------------------------------------------------------
