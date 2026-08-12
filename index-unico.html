@@ -646,12 +646,34 @@ ul.marquee-group{padding-right:var(--space-5)}
 /* ==========================================================================
    8. PORTFÓLIO
    ========================================================================== */
-.portfolio-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:var(--space-4);
+/* Esteiras horizontais: duas fileiras em loop, uma para cada lado.
+   O respiro vai como padding do grupo (e com o elemento no seletor, senão o
+   reset ul[class]{padding:0} o anula) para entrar na largura do grupo — é
+   isso que faz o translate de -50% emendar sem salto. */
+.reels{
+  display:flex;flex-direction:column;gap:var(--space-4);
+  /* sangra até a borda do container: no mobile isso é a borda da tela, e os
+     cards entram e saem de cena em vez de bater numa margem invisível */
+  margin-inline:calc(-1 * var(--gutter));
 }
+.reel{overflow:hidden}
+.reel-track{display:flex;width:max-content}
+.reel-group{display:flex;gap:var(--space-4)}
+ul.reel-group{padding-right:var(--space-4)}
+
+@keyframes reel-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes reel-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+/* Durações diferentes porque as fileiras têm larguras diferentes: assim as
+   duas correm à mesma velocidade, e não em passo trocado. */
+.js .reel--left .reel-track{animation:reel-left 46s linear infinite}
+.js .reel--right .reel-track{animation:reel-right 37s linear infinite}
+/* Encostar o dedo ou o mouse congela a fileira para examinar um card */
+.reel:hover .reel-track,
+.reel:active .reel-track{animation-play-state:paused}
+
 .project-card{
+  flex:0 0 auto;
+  width:clamp(244px,66vw,300px);   /* fixa: o vizinho aparece pela borda */
   background:var(--color-surface);
   border:1px solid var(--color-border);
   border-radius:var(--radius-lg);
@@ -1171,11 +1193,6 @@ ul.marquee-group{padding-right:var(--space-5)}
 /* O deslocamento lateral inicial nunca pode passar da margem da página, senão
    vira scroll horizontal. A magnitude acompanha a margem de cada breakpoint,
    e o clip no eixo X protege navegadores que não suportarem o cálculo. */
-#portfolio{overflow-x:clip}
-.portfolio-grid{perspective:1000px;--dx-mag:18px}
-.js .portfolio-grid > li.reveal{transform:translate3d(var(--dx,0),20px,0)}
-.portfolio-grid > li:nth-child(odd){--dx:calc(-1 * var(--dx-mag))}
-.portfolio-grid > li:nth-child(even){--dx:var(--dx-mag)}
 .project-card{transform-style:preserve-3d}
 .project-card.is-tilting{transition:none}   /* o rAF conduz durante o tilt */
 
@@ -1241,10 +1258,8 @@ ul.marquee-group{padding-right:var(--space-5)}
 
 @media (min-width:481px){
   :root{--gutter:var(--space-5);--section-y:80px}
-  .portfolio-grid{--dx-mag:26px}
   .steps-track{display:none}
   .steps-wrap .steps-grid{padding-left:0}
-  .portfolio-grid{grid-template-columns:repeat(2,1fr)}
   .steps-grid{grid-template-columns:repeat(2,1fr)}
   .panel-dark,.final-cta,.guarantee{padding-inline:var(--space-6)}
   .footer-bottom{flex-direction:row;align-items:center;justify-content:space-between}
@@ -1253,7 +1268,6 @@ ul.marquee-group{padding-right:var(--space-5)}
 /* Tablet largo / desktop pequeno — 768px+ */
 @media (min-width:768px){
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
-  .portfolio-grid{--dx-mag:34px}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
   .price-card{padding:var(--space-6)}
@@ -1265,7 +1279,6 @@ ul.marquee-group{padding-right:var(--space-5)}
   :root{--gutter:80px}
   .hero{padding-block:var(--space-8) var(--space-7)}
   .hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:var(--space-7)}
-  .portfolio-grid{grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
   .steps-grid{grid-template-columns:repeat(4,1fr)}
   .steps-track{
     display:block;
@@ -1320,6 +1333,12 @@ ul.marquee-group{padding-right:var(--space-5)}
   .js .plan-badge[data-pulse],.js .plan--highlight.is-visible,
   .js .step-card.is-visible .step-number span{animation:none}
   .scroll-progress,.steps-track,.end-dim,.hero-media{display:none}
+  /* sem a animação, os cards fora da tela ficariam inalcançáveis: a fileira
+     passa a rolar à mão e a cópia duplicada sai de cena */
+  .reel{overflow-x:auto;scroll-snap-type:x mandatory}
+  .reel-track{animation:none!important}
+  .reel-group[aria-hidden]{display:none}
+  .project-card{scroll-snap-align:center}
   .btn-trace::before,.btn-pulse::before,.btn-shimmer::before{display:none}
   .btn-pulse{animation:none;scale:1}
   .site-header.is-compact .header-inner{min-height:var(--header-h)}
@@ -1486,71 +1505,150 @@ ul.marquee-group{padding-right:var(--space-5)}
         </p>
       </div>
 
-      <ul class="portfolio-grid">
-        <li class="project-card reveal" style="--i:0">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+      <div class="reels reveal">
+        <div class="reel reel--left">
+          <div class="reel-track">
+            <ul class="reel-group">
+            <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Total Skin</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">MB2 Incorporações</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Tobar Advogados</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Revolution EUA</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Full Face Global</h3>
+            </li>
+                </ul>
+            <ul class="reel-group" aria-hidden="true">
+            <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Total Skin</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">MB2 Incorporações</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Tobar Advogados</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Revolution EUA</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Full Face Global</h3>
+            </li>
+                </ul>
           </div>
-          <h3 class="project-name">Total Skin</h3>
-        </li>
-        <li class="project-card reveal" style="--i:1">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+        </div>
+        <div class="reel reel--right">
+          <div class="reel-track">
+            <ul class="reel-group">
+            <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Tiago Giacomoni</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Carla Mosselaar</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">BCorporate</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Grupo VT Rads</h3>
+            </li>
+                </ul>
+            <ul class="reel-group" aria-hidden="true">
+            <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Tiago Giacomoni</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Carla Mosselaar</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">BCorporate</h3>
+            </li>
+                <li class="project-card">
+              <div class="mockup" aria-hidden="true">
+                <div class="mockup-bar"><i></i><i></i><i></i></div>
+                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+              </div>
+              <h3 class="project-name">Grupo VT Rads</h3>
+            </li>
+                </ul>
           </div>
-          <h3 class="project-name">MB2 Incorporações</h3>
-        </li>
-        <li class="project-card reveal" style="--i:2">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Tobar Advogados</h3>
-        </li>
-        <li class="project-card reveal" style="--i:0">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Revolution EUA</h3>
-        </li>
-        <li class="project-card reveal" style="--i:1">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Full Face Global</h3>
-        </li>
-        <li class="project-card reveal" style="--i:2">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Tiago Giacomoni</h3>
-        </li>
-        <li class="project-card reveal" style="--i:0">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Carla Mosselaar</h3>
-        </li>
-        <li class="project-card reveal" style="--i:1">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">BCorporate</h3>
-        </li>
-        <li class="project-card reveal" style="--i:2">
-          <div class="mockup" aria-hidden="true">
-            <div class="mockup-bar"><i></i><i></i><i></i></div>
-            <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-          </div>
-          <h3 class="project-name">Grupo VT Rads</h3>
-        </li>
-      </ul>
+        </div>
+      </div>
 
     </div>
   </section>
