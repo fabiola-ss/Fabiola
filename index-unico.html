@@ -799,7 +799,10 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   padding:var(--space-6) var(--space-4);
 }
 .panel-dark .text-muted{color:rgba(255,255,255,.66)}
-.features-layout{display:grid;gap:var(--space-6)}
+/* Ordem natural: título → lista → botão. No mobile é exatamente isso que
+   se quer ler. O desktop reposiciona por grid, sem mexer no HTML. */
+.features-layout{display:grid;gap:var(--space-5)}
+.features-cta-btn{justify-self:start}
 /* Duas colunas já no mobile: em coluna única a seção fica longa demais e
    cansa de rolar. O corte em 360px veio de medição, não de palpite: de
    360px para cima o grid encurta a seção em 48 a 112px com quebra máxima
@@ -835,7 +838,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   color:var(--color-bg-dark);
   display:grid;place-items:center;
 }
-.features-cta{display:flex;flex-direction:column;gap:var(--space-3);align-items:flex-start}
 
 /* ==========================================================================
    12. COMO FUNCIONA — cards verde-neon
@@ -1258,7 +1260,17 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     transform:scaleX(var(--p,0));transform-origin:left center;
   }
   .steps-wrap .steps-grid{padding-left:0;padding-top:36px}
-  .features-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:center;gap:var(--space-8)}
+  /* Desktop: título e botão empilhados à esquerda, lista à direita ocupando
+     as duas linhas. O título encosta no fim da 1ª linha e o botão no início
+     da 2ª, então o par fica centralizado em relação à lista. */
+  .features-layout{
+    grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);
+    column-gap:var(--space-8);
+    row-gap:var(--space-4);
+  }
+  .features-intro{grid-column:1;grid-row:1;align-self:end}
+  .features-list{grid-column:2;grid-row:1 / span 2}
+  .features-cta-btn{grid-column:1;grid-row:2;align-self:start}
   .panel-dark{padding:var(--space-8) var(--space-7)}
   .guarantee{padding:var(--space-8) var(--space-7)}
   .section-head{margin-bottom:var(--space-7)}
@@ -1631,12 +1643,7 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
       <div class="panel-dark on-dark reveal">
         <div class="features-layout">
 
-          <div class="features-cta">
-            <h2 id="beneficios-title">Tudo pra sua empresa <span class="em-brand">estar online</span>.</h2>
-            <a class="btn btn-primary btn-trace btn-lg" href="https://wa.me/5500000000000">
-              QUERO MEU SITE <span class="arrow" aria-hidden="true">→</span>
-            </a>
-          </div>
+          <h2 class="features-intro" id="beneficios-title">Tudo pra sua empresa <span class="em-brand">estar online</span>.</h2>
 
           <ul class="features-list">
             <li><span class="check" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>Design moderno</li>
@@ -1650,6 +1657,10 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
             <li><span class="check" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>Suporte 7 dias por semana</li>
             <li><span class="check" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 5 5L19 7"/></svg></span>Alterações de conteúdo sempre que precisar</li>
           </ul>
+
+          <a class="btn btn-primary btn-trace btn-lg features-cta-btn" href="https://wa.me/5500000000000">
+            QUERO MEU SITE <span class="arrow" aria-hidden="true">→</span>
+          </a>
 
         </div>
       </div>
