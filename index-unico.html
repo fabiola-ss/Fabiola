@@ -800,15 +800,31 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 }
 .panel-dark .text-muted{color:rgba(255,255,255,.66)}
 .features-layout{display:grid;gap:var(--space-6)}
+/* Duas colunas já no mobile: em coluna única a seção fica longa demais e
+   cansa de rolar. O corte em 360px veio de medição, não de palpite: de
+   360px para cima o grid encurta a seção em 48 a 112px com quebra máxima
+   de 4 linhas; a 344px o ganho é zero e o texto quebra em 5 ou 6. */
 .features-list{
   display:grid;
-  grid-template-columns:1fr;
-  gap:var(--space-3) var(--space-4);
+  grid-template-columns:repeat(2,1fr);
+  gap:var(--space-4) var(--space-3);
+}
+@media (max-width:359px){
+  .features-list{grid-template-columns:1fr;gap:var(--space-3)}
 }
 .features-list li{
   display:flex;align-items:flex-start;gap:var(--space-3);
   padding-block:var(--space-1);
   font-size:var(--fs-body-lg);
+}
+/* No mobile as duas colunas ficam estreitas: ícone menor, folga menor e
+   corpo de texto um passo abaixo fazem o texto caber em menos linhas —
+   é o que faz o grid realmente encurtar a seção em vez de só reempilhar. */
+@media (max-width:480px){
+  .panel-dark{padding-inline:var(--space-3)}
+  .features-list li{gap:10px;font-size:var(--fs-body)}
+  .features-list .check{width:22px;height:22px}
+  .features-list .check svg{width:13px;height:13px}
 }
 .check{
   flex-shrink:0;
@@ -1212,7 +1228,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   .steps-wrap .steps-grid{padding-left:0}
   .portfolio-grid{grid-template-columns:repeat(2,1fr)}
   .steps-grid{grid-template-columns:repeat(2,1fr)}
-  .features-list{grid-template-columns:repeat(2,1fr)}
   .panel-dark,.final-cta,.guarantee{padding-inline:var(--space-6)}
   .footer-bottom{flex-direction:row;align-items:center;justify-content:space-between}
 }
