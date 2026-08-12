@@ -795,7 +795,12 @@ ul.reel-group{padding-right:var(--space-4)}
   z-index:4;
   pointer-events:none;
 }
+/* A bolinha é a única parte que captura o ponteiro, e touch-action:none
+   libera o arrasto horizontal nela sem travar a rolagem no resto do card. */
 .compare-handle{
+  pointer-events:auto;
+  touch-action:none;
+  cursor:ew-resize;
   position:absolute;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -822,7 +827,10 @@ ul.reel-group{padding-right:var(--space-4)}
   margin:0;
   background:transparent;
   appearance:none;-webkit-appearance:none;
-  cursor:ew-resize;
+  /* Inerte ao ponteiro: cobrindo a faixa central, ele engolia o gesto de
+     rolar e o transformava em arrastar. Continua alcançável por Tab, e as
+     setas seguem movendo a barra; arrastar agora é só pela bolinha. */
+  pointer-events:none;
 }
 .compare-range::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
@@ -831,7 +839,7 @@ ul.reel-group{padding-right:var(--space-4)}
 .compare-range::-moz-range-thumb{
   width:56px;height:220px;background:transparent;border:0;cursor:ew-resize;
 }
-.compare-range:focus-visible{outline:3px solid var(--color-focus);outline-offset:-3px;border-radius:var(--radius-xl)}
+.compare:has(.compare-range:focus-visible) .compare-handle{outline:3px solid var(--color-focus);outline-offset:3px}
 .compare-hint{
   margin-top:var(--space-3);
   display:flex;align-items:center;justify-content:center;gap:var(--space-2);
@@ -1741,29 +1749,6 @@ ul.reel-group{padding-right:var(--space-4)}
                  aria-valuetext="Metade do novo site visível">
         </div>
 
-          <!-- Painel "antes" (sobreposto, recortado) -->
-          <div class="compare-pane compare-pane--before" id="comparePaneBefore">
-            <img loading="lazy" decoding="async" width="1200" height="750"
-                 alt="Antes: site antigo do Airton Rafael, com layout datado, muitos blocos pequenos, texto denso e cores desbotadas."
-                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 750'%3E%3Crect width='1200' height='750' fill='%23DEDBD2'/%3E%3Crect x='40' y='30' width='1120' height='690' fill='%23F1F0EA' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='40' y='30' width='1120' height='96' fill='%233A4A6B'/%3E%3Crect x='70' y='60' width='230' height='36' fill='%23C9C6BE'/%3E%3Crect x='620' y='72' width='90' height='12' fill='%23AFC0DD'/%3E%3Crect x='730' y='72' width='90' height='12' fill='%23AFC0DD'/%3E%3Crect x='840' y='72' width='90' height='12' fill='%23AFC0DD'/%3E%3Crect x='950' y='72' width='90' height='12' fill='%23AFC0DD'/%3E%3Crect x='40' y='126' width='1120' height='34' fill='%236E7FA0'/%3E%3Crect x='70' y='190' width='560' height='210' fill='%23D6D2C6' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='250' y='270' width='200' height='50' fill='%23BFBBAE'/%3E%3Crect x='660' y='190' width='470' height='24' fill='%23A9A6A0'/%3E%3Crect x='660' y='232' width='470' height='10' fill='%23C4C1B8'/%3E%3Crect x='660' y='256' width='470' height='10' fill='%23C4C1B8'/%3E%3Crect x='660' y='280' width='440' height='10' fill='%23C4C1B8'/%3E%3Crect x='660' y='304' width='470' height='10' fill='%23C4C1B8'/%3E%3Crect x='660' y='328' width='400' height='10' fill='%23C4C1B8'/%3E%3Crect x='660' y='362' width='150' height='34' fill='%233A4A6B'/%3E%3Crect x='70' y='430' width='250' height='150' fill='%23E6E4DC' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='340' y='430' width='250' height='150' fill='%23E6E4DC' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='610' y='430' width='250' height='150' fill='%23E6E4DC' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='880' y='430' width='250' height='150' fill='%23E6E4DC' stroke='%23B8B4A8' stroke-width='2'/%3E%3Crect x='95' y='455' width='120' height='12' fill='%23A9A6A0'/%3E%3Crect x='365' y='455' width='120' height='12' fill='%23A9A6A0'/%3E%3Crect x='635' y='455' width='120' height='12' fill='%23A9A6A0'/%3E%3Crect x='905' y='455' width='120' height='12' fill='%23A9A6A0'/%3E%3Crect x='95' y='485' width='200' height='8' fill='%23CBC8BF'/%3E%3Crect x='365' y='485' width='200' height='8' fill='%23CBC8BF'/%3E%3Crect x='635' y='485' width='200' height='8' fill='%23CBC8BF'/%3E%3Crect x='905' y='485' width='200' height='8' fill='%23CBC8BF'/%3E%3Crect x='40' y='620' width='1120' height='100' fill='%233A4A6B'/%3E%3Crect x='70' y='650' width='300' height='10' fill='%236E7FA0'/%3E%3Crect x='70' y='674' width='220' height='10' fill='%236E7FA0'/%3E%3Crect x='930' y='650' width='200' height='34' fill='%232C3A55'/%3E%3C/svg%3E">
-          </div>
-
-          <p class="compare-badge compare-badge--after">Depois — Novo site</p>
-          <p class="compare-badge compare-badge--before">Antes — Site antigo</p>
-
-          <div class="compare-divider" aria-hidden="true">
-            <span class="compare-handle">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M9 6 4 12l5 6M15 6l5 6-5 6"/>
-              </svg>
-            </span>
-          </div>
-
-          <input class="compare-range" id="compareRange" type="range" min="0" max="100" step="0.5" value="50"
-                 aria-label="Arraste a bolinha para comparar o antes e o depois do site"
-                 aria-valuetext="Metade do novo site visível">
-        </div>
-
         <p class="compare-hint">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M9 6 4 12l5 6M15 6l5 6-5 6"/>
@@ -2178,6 +2163,34 @@ ul.reel-group{padding-right:var(--space-4)}
     range.addEventListener('input', function () { setPosition(range.value); });
     setPosition(range.value);
 
+    /* Arrastar pela bolinha. Substitui o arrasto que o range fazia quando
+       cobria o card inteiro — que era o que impedia a rolagem. */
+    var bolinha = compare.querySelector('.compare-handle');
+    if (bolinha) {
+      var arrastando = false;
+
+      bolinha.addEventListener('pointerdown', function (e) {
+        arrastando = true;
+        try { bolinha.setPointerCapture(e.pointerId); } catch (_) {}
+        e.preventDefault();
+      });
+
+      bolinha.addEventListener('pointermove', function (e) {
+        if (!arrastando) return;
+        var r = compare.getBoundingClientRect();
+        var pct = ((e.clientX - r.left) / r.width) * 100;
+        range.value = pct;
+        setPosition(pct);
+      });
+
+      ['pointerup', 'pointercancel'].forEach(function (ev) {
+        bolinha.addEventListener(ev, function (e) {
+          arrastando = false;
+          try { bolinha.releasePointerCapture(e.pointerId); } catch (_) {}
+        });
+      });
+    }
+
     /* Rolar um painel rola o outro na mesma medida: sem isso o antes e o
        depois sairiam de sincronia e a comparação perderia o sentido.
        A trava evita o eco de um painel disparar o outro de volta. */
@@ -2372,47 +2385,6 @@ ul.reel-group{padding-right:var(--space-4)}
       btn.addEventListener('focus', reset);
       window.addEventListener('blur', reset);
     });
-  }
-
-  /* ------------------------------------------------------------------
-     Demonstração do comparador: ao entrar na tela, a barra varre uma vez
-     sozinha, mostrando que dá pra arrastar. Qualquer toque cancela.
-     ------------------------------------------------------------------ */
-  if (compare && range && !reduceMotion && 'IntersectionObserver' in window) {
-    var demoRunning = false;
-
-    function cancelDemo() { demoRunning = false; }
-    ['pointerdown', 'keydown', 'input'].forEach(function (ev) {
-      compare.addEventListener(ev, cancelDemo, { once: true });
-    });
-
-    var demoObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        demoObserver.unobserve(entry.target);
-
-        demoRunning = true;
-        var t0 = null, duration = 2000;
-
-        function sweep(now) {
-          if (!demoRunning) return;
-          if (t0 === null) t0 = now;
-          var t = Math.min((now - t0) / duration, 1);
-          /* meia onda suave: 50 → 74 → 26 → 50 */
-          var pos = 50 + 24 * Math.sin(t * Math.PI * 2);
-          range.value = pos;
-          setPosition(pos);
-          if (t < 1) requestAnimationFrame(sweep);
-          else demoRunning = false;
-        }
-
-        setTimeout(function () {
-          if (demoRunning) requestAnimationFrame(sweep);
-        }, 450);
-      });
-    }, { threshold: 0.45 });
-
-    demoObserver.observe(compare);
   }
 
   /* ------------------------------------------------------------------
