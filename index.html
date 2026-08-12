@@ -751,10 +751,25 @@ ul.reel-group{padding-right:var(--space-4)}
   /* sem overscroll-behavior:contain de propósito: ao chegar ao fim, a
      rolagem encadeia para a página e o visitante não fica preso aqui */
 }
+/* O site é renderizado numa largura de DESKTOP e reduzido por escala, senão
+   o iframe estreito faria o próprio site servir o layout de celular.
+   transform:scale não afeta o layout, então o contêiner continuaria achando
+   que o quadro tem a altura inteira e a rolagem passaria do fim: por isso o
+   "sizer", que tem a proporção do quadro e carrega a altura já reduzida. */
+/* sem unidade: aspect-ratio só aceita número, e o px entra no calc */
+.compare{--frame-w:1440;--frame-h:4200;--frame-scale:1}
+.compare-frame-sizer{
+  position:relative;
+  width:100%;
+  aspect-ratio:var(--frame-w) / var(--frame-h);
+  overflow:hidden;
+}
 .compare-frame{
   display:block;
-  width:100%;
-  height:2600px;      /* alto o bastante para o site inteiro caber sem rolar por dentro */
+  width:calc(var(--frame-w) * 1px);
+  height:calc(var(--frame-h) * 1px);
+  transform:scale(var(--frame-scale));
+  transform-origin:top left;
   border:0;
   background:var(--color-surface);
 }
@@ -780,6 +795,9 @@ ul.reel-group{padding-right:var(--space-4)}
 /* No celular os dois crachás não cabem lado a lado e se sobrepõem: o do
    "antes" desce para o rodapé do card, ainda do lado dele. */
 @media (max-width:600px){
+  /* Cada pixel conta: mostrando um layout de 1440px num card estreito, a
+     margem lateral custava 15% de escala. Sangra até a borda da tela. */
+  .compare{margin-inline:calc(-1 * var(--gutter));border-radius:0;border-inline:0}
   .compare-badge{font-size:.6875rem;padding:6px 11px}
   .compare-badge--before{top:auto;bottom:var(--space-3)}
 }
@@ -1716,20 +1734,24 @@ ul.reel-group{padding-right:var(--space-4)}
           <!-- Painel "depois" (base) -->
           <div class="compare-pane compare-pane--after">
             <div class="compare-scroll" data-sync>
-              <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
+              <div class="compare-frame-sizer">
+                <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
                       sandbox="allow-same-origin allow-scripts allow-popups"
                       title="Depois — novo site do Airton Rafael"
                       src="https://airtonrafael.com.br/"></iframe>
+              </div>
             </div>
           </div>
 
           <!-- Painel "antes" (sobreposto, recortado pela barra) -->
           <div class="compare-pane compare-pane--before" id="comparePaneBefore">
             <div class="compare-scroll" data-sync>
-              <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
+              <div class="compare-frame-sizer">
+                <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
                       sandbox="allow-same-origin allow-scripts allow-popups"
                       title="Antes — site antigo do Airton Rafael"
                       src="https://airtonrafael.com/"></iframe>
+              </div>
             </div>
           </div>
 
@@ -2162,6 +2184,18 @@ ul.reel-group{padding-right:var(--space-4)}
 
     range.addEventListener('input', function () { setPosition(range.value); });
     setPosition(range.value);
+
+    /* A escala precisa ser um número, e nenhuma unidade de CSS exprime
+       "largura do card dividida pela largura de desktop" — daí o cálculo aqui,
+       refeito sempre que o card muda de tamanho. */
+    function ajustarEscala() {
+      var largura = compare.clientWidth;
+      var alvo = parseFloat(getComputedStyle(compare).getPropertyValue('--frame-w')) || 1440;
+      compare.style.setProperty('--frame-scale', (largura / alvo).toFixed(5));
+    }
+    ajustarEscala();
+    if ('ResizeObserver' in window) new ResizeObserver(ajustarEscala).observe(compare);
+    else window.addEventListener('resize', ajustarEscala, { passive: true });
 
     /* Arrastar pela bolinha. Substitui o arrasto que o range fazia quando
        cobria o card inteiro — que era o que impedia a rolagem. */
