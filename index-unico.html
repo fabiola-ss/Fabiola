@@ -717,6 +717,34 @@ ul.reel-group{padding-right:var(--space-4)}
 }
 .project-name{font-family:var(--font-heading);font-weight:600;font-size:var(--fs-body-lg);letter-spacing:-.01em}
 
+/* Card com site real: o link cobre a moldura + o nome, herdando a cor do
+   texto para não parecer um link azul solto. A seta fica sempre visível
+   e discreta — nada de depender de :hover, que não existe no toque, que
+   é onde a maior parte do tráfego chega. */
+.project-link{
+  display:block;
+  color:inherit;
+  text-decoration:none;
+  border-radius:var(--radius-md);
+}
+.project-link:focus-visible{outline-offset:4px}
+.project-link .project-name{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--space-2);
+}
+.project-link-arrow{
+  flex-shrink:0;
+  color:var(--color-text-muted);
+  transition:color var(--transition),transform var(--transition);
+}
+.project-link:hover .project-link-arrow,
+.project-link:focus-visible .project-link-arrow{
+  color:var(--color-brand-text);
+  transform:translate(2px,-2px);
+}
+
 /* ==========================================================================
    9. ANTES E DEPOIS
    ========================================================================== */
@@ -1577,32 +1605,60 @@ ul.reel-group{padding-right:var(--space-4)}
               <h3 class="project-name">Total Skin</h3>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">MB2 Incorporações</h3>
+              <a class="project-link" href="https://mb2incorporacoes.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: MB2 Incorporações (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">MB2 Incorporações
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Tobar Advogados</h3>
+              <a class="project-link" href="https://tobaradvogados.com.br/direitoseguro/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Tobar Advogados (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Tobar Advogados
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Revolution EUA</h3>
+              <a class="project-link" href="https://eua.cursosrevolution.com/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Revolution EUA (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Revolution EUA
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Full Face Global</h3>
+              <a class="project-link" href="https://fullfaceglobal.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Full Face Global (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Full Face Global
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 </ul>
             <ul class="reel-group" aria-hidden="true">
@@ -1614,32 +1670,60 @@ ul.reel-group{padding-right:var(--space-4)}
               <h3 class="project-name">Total Skin</h3>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">MB2 Incorporações</h3>
+              <a class="project-link" href="https://mb2incorporacoes.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: MB2 Incorporações (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">MB2 Incorporações
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Tobar Advogados</h3>
+              <a class="project-link" href="https://tobaradvogados.com.br/direitoseguro/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Tobar Advogados (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Tobar Advogados
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Revolution EUA</h3>
+              <a class="project-link" href="https://eua.cursosrevolution.com/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Revolution EUA (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Revolution EUA
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Full Face Global</h3>
+              <a class="project-link" href="https://fullfaceglobal.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Full Face Global (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Full Face Global
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 </ul>
           </div>
@@ -1648,18 +1732,32 @@ ul.reel-group{padding-right:var(--space-4)}
           <div class="reel-track">
             <ul class="reel-group">
             <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Tiago Giacomoni</h3>
+              <a class="project-link" href="https://tiagogiacomoni.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Tiago Giacomoni (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Tiago Giacomoni
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Carla Mosselaar</h3>
+              <a class="project-link" href="https://carlamosselaar.com.br/mentoria" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Carla Mosselaar (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Carla Mosselaar
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
               <div class="mockup" aria-hidden="true">
@@ -1678,18 +1776,32 @@ ul.reel-group{padding-right:var(--space-4)}
                 </ul>
             <ul class="reel-group" aria-hidden="true">
             <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Tiago Giacomoni</h3>
+              <a class="project-link" href="https://tiagogiacomoni.com.br/" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Tiago Giacomoni (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Tiago Giacomoni
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
-              <div class="mockup" aria-hidden="true">
-                <div class="mockup-bar"><i></i><i></i><i></i></div>
-                <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
-              </div>
-              <h3 class="project-name">Carla Mosselaar</h3>
+              <a class="project-link" href="https://carlamosselaar.com.br/mentoria" target="_blank" rel="noopener noreferrer"
+                 aria-label="Ver site: Carla Mosselaar (abre em nova aba)">
+                <div class="mockup" aria-hidden="true">
+                  <div class="mockup-bar"><i></i><i></i><i></i></div>
+                  <div class="mockup-body"><i class="m-title"></i><i class="m-line"></i><i class="m-line short"></i><i class="m-btn"></i></div>
+                </div>
+                <h3 class="project-name">Carla Mosselaar
+                  <svg class="project-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17 17 7M9 7h8v8"/>
+                  </svg>
+                </h3>
+              </a>
             </li>
                 <li class="project-card">
               <div class="mockup" aria-hidden="true">
