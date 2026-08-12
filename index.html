@@ -664,20 +664,25 @@ ul.reel-group{padding-right:var(--space-4)}
 @keyframes reel-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @keyframes reel-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 /* Durações diferentes porque as fileiras têm larguras diferentes: assim as
-   duas correm à mesma velocidade, e não em passo trocado. */
-.js .reel--left .reel-track{animation:reel-left 46s linear infinite}
-.js .reel--right .reel-track{animation:reel-right 37s linear infinite}
+   duas correm à mesma velocidade (~35px/s), e não em passo trocado.
+   Recalculadas quando os cards alargaram: com a duração antiga a esteira
+   teria acelerado para 59px/s, perdendo a leitura tranquila. */
+.js .reel--left .reel-track{animation:reel-left 78s linear infinite}
+.js .reel--right .reel-track{animation:reel-right 62s linear infinite}
 /* Encostar o dedo ou o mouse congela a fileira para examinar um card */
 .reel:hover .reel-track,
 .reel:active .reel-track{animation-play-state:paused}
 
 .project-card{
   flex:0 0 auto;
-  width:clamp(268px,78vw,360px);   /* fixa e maior, como no print de referência; o vizinho ainda aparece pela borda */
+  /* Mais largo e sem padding: a moldura branca em volta desperdiçava espaço
+     e obrigava a cortar 36% da largura de cada captura. Agora o screenshot
+     encosta nas bordas do card e o overflow:hidden arredonda os cantos. */
+  width:clamp(300px,86vw,520px);
   background:var(--color-surface);
   border:1px solid var(--color-border);
   border-radius:var(--radius-lg);
-  padding:var(--space-4);
+  overflow:hidden;
   box-shadow:var(--shadow-sm);
   transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition);
 }
@@ -695,13 +700,11 @@ ul.reel-group{padding-right:var(--space-4)}
    este fundo nunca aparece. */
 .mockup{
   position:relative;
-  border-radius:var(--radius-lg);
   overflow:hidden;
   background:
     radial-gradient(120% 90% at 15% 0%,rgba(109,94,240,.35),transparent 60%),
     radial-gradient(100% 80% at 100% 100%,rgba(215,250,60,.18),transparent 55%),
     var(--color-bg-dark);
-  margin-bottom:var(--space-3);
 }
 .mockup img{
   display:block;
@@ -710,7 +713,10 @@ ul.reel-group{padding-right:var(--space-4)}
   object-position:top center;   /* mostra o topo do site, a parte mais reconhecível */
 }
 .mockup-body{
-  aspect-ratio:4/3;
+  /* 2/1 é quase a proporção real das capturas (2,09:1): o corte cai
+     de 36% para 4,5% da largura, então a hero de cada site aparece
+     praticamente inteira. */
+  aspect-ratio:2/1;
   padding:var(--space-4);
   display:flex;flex-direction:column;gap:11px;
 }
@@ -726,7 +732,11 @@ ul.reel-group{padding-right:var(--space-4)}
   height:20px;width:40%;margin-top:auto;border-radius:var(--radius-full);
   background:var(--color-primary);
 }
-.project-name{font-family:var(--font-heading);font-weight:600;font-size:var(--fs-body-lg);letter-spacing:-.01em}
+.project-name{
+  font-family:var(--font-heading);font-weight:600;
+  font-size:var(--fs-body-lg);letter-spacing:-.01em;
+  padding:var(--space-3) var(--space-4);   /* o respiro que era do card */
+}
 
 /* Card com site real: o link cobre a moldura + o nome, herdando a cor do
    texto para não parecer um link azul solto. A seta fica sempre visível
