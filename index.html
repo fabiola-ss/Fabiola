@@ -932,39 +932,39 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 /* ==========================================================================
    16. FAQ
    ========================================================================== */
-.faq-list{display:flex;flex-direction:column;gap:var(--space-3);max-width:820px}
-.faq-item{
-  background:var(--color-surface);
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-sm);
-  overflow:hidden;
-  transition:border-color var(--transition),box-shadow var(--transition);
-}
-.faq-item[open]{border-color:var(--color-brand-light);box-shadow:var(--shadow-md)}
+/* Lista corrida: sem card, sem sombra, só uma divisória fina entre as
+   perguntas. Cada item herda o fundo da seção. */
+.faq-list{display:flex;flex-direction:column;max-width:820px}
+.faq-item{border-bottom:1px solid var(--color-border)}
 .faq-item summary{
-  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);
-  min-height:60px;
-  padding:var(--space-4);
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);
+  min-height:56px;                 /* alvo de toque confortável */
+  padding-block:var(--space-3);
   cursor:pointer;
   list-style:none;
   font-family:var(--font-heading);
   font-size:var(--fs-body-lg);
   font-weight:600;
   letter-spacing:-.01em;
-  transition:color var(--transition),background-color var(--transition);
+  line-height:1.35;
+  transition:color var(--transition);
+  -webkit-tap-highlight-color:transparent;
 }
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary:hover{color:var(--color-brand-hover);background:rgba(109,94,240,.04)}
+.faq-item summary:hover{color:var(--color-brand-hover)}
+.faq-item summary:focus-visible{outline-offset:-2px}
+/* Chevron simples, sem fundo: gira 180° ao abrir */
 .faq-icon{
-  flex-shrink:0;width:32px;height:32px;border-radius:50%;
-  background:rgba(109,94,240,.10);color:var(--color-brand);
+  flex-shrink:0;
   display:grid;place-items:center;
-  transition:transform var(--transition),background-color var(--transition);
+  color:var(--color-text-primary);
+  transition:transform .3s ease,color var(--transition);
 }
-.faq-item[open] .faq-icon{transform:rotate(45deg);background:var(--color-brand);color:#fff}
+.faq-item[open] .faq-icon{transform:rotate(180deg);color:var(--color-brand-text)}
+.faq-item summary:hover .faq-icon{color:var(--color-brand-hover)}
 .faq-answer{
-  padding:0 var(--space-4) var(--space-4);
+  padding-bottom:var(--space-4);
+  padding-right:var(--space-5);    /* não passa por baixo do chevron */
   color:var(--color-text-muted);
   max-width:68ch;
 }
@@ -1777,70 +1777,70 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
     <div class="container">
 
       <div class="section-head reveal">
-        <h2 id="faq-title">Tudo o que você <span class="em-brand">precisa saber</span>.</h2>
+        <h2 id="faq-title">Tudo o que você precisa <span class="em-brand">saber</span>.</h2>
       </div>
 
       <div class="faq-list">
 
         <details class="faq-item reveal" style="--i:0">
-          <summary>Prazo de entrega
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Em quanto tempo fica pronto?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Entrega em até 2 dias úteis: em até 2 dias úteis seu site está no ar.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:1">
-          <summary>Necessidade de conhecimento técnico
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Preciso entender de tecnologia?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Nenhum. Você compartilha os dados da empresa, logo e referências, e nossa equipe cria todo o site pra você.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:2">
-          <summary>Possibilidade de alterações
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Posso solicitar alterações?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Você aprova o site antes de publicar, com 2 rodadas de ajuste inclusas. Depois da publicação, alterações de conteúdo sempre que precisar.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:3">
-          <summary>Responsividade mobile
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>O site funciona no celular?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">O site é responsivo em todos os dispositivos: celular, tablet e computador.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:4">
-          <summary>Domínio e hospedagem inclusos
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Domínio e hospedagem estão inclusos?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">A publicação está incluída no valor. Para detalhes de domínio e hospedagem do seu caso, <a href="https://wa.me/5500000000000">fale com a gente pelo WhatsApp</a>.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:5">
-          <summary>SEO e Google
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>O site aparece no Google?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Todo site sai com SEO básico configurado, para que sua empresa seja encontrada quando o cliente pesquisar.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:6">
-          <summary>Formas de pagamento
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Quais as formas de pagamento?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">R$ 500 em pagamento único, sem mensalidade. <a href="https://wa.me/5500000000000">Fale com a gente pelo WhatsApp</a> para combinar a forma de pagamento.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:7">
-          <summary>Exemplos de sites
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Posso ver exemplos de sites já feitos?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Veja alguns sites desenvolvidos para empresas e profissionais de diferentes segmentos na <a href="#portfolio">seção de projetos</a>.</p>
         </details>
 
         <details class="faq-item reveal" style="--i:8">
-          <summary>Como funciona o atendimento
-            <span class="faq-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <summary>Como funciona o atendimento?
+            <span class="faq-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
           </summary>
           <p class="faq-answer">Todo o atendimento acontece pelo WhatsApp, com suporte 7 dias por semana.</p>
         </details>
