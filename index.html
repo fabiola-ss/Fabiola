@@ -616,19 +616,30 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   animation:marquee 34s linear infinite;
 }
 .marquee:hover .marquee-track{animation-play-state:paused}
+/* Faixa de palavras-chave: mesma fonte de máquina do selo do hero, em caixa
+   alta e fina. A leveza vem do conjunto — corpo menor, peso 400 e tracking
+   largo — porque só a cor não podia ir além de #6C6C6C: é o cinza mais
+   claro que ainda se lê sobre esta faixa (4.70:1); #727272 já reprova. */
 .marquee-group{
   display:flex;align-items:center;gap:var(--space-5);
-  padding-right:var(--space-5);
-  font-family:var(--font-heading);
-  font-size:var(--fs-body-lg);
-  font-weight:600;
-  letter-spacing:-.01em;
-  color:var(--color-text-primary);
+  font-family:var(--font-mono);
+  font-size:.8125rem;
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:#6C6C6C;
   white-space:nowrap;
 }
+/* O reset "ul[class]{padding:0}" tem especificidade maior que .marquee-group
+   e anulava este respiro, deixando a emenda do loop sem vão nenhum. O seletor
+   com o elemento empata em especificidade e vence por vir depois.
+   O respiro precisa ser padding do grupo, não gap da trilha: ele entra na
+   largura do grupo, e é isso que mantém o translate de -50% exato. */
+ul.marquee-group{padding-right:var(--space-5)}
 .marquee-group li{display:flex;align-items:center;gap:var(--space-5)}
 .marquee-group li::after{
-  content:"";width:8px;height:8px;border-radius:50%;background:var(--color-brand);flex-shrink:0;
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--color-brand-light);flex-shrink:0;
 }
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
