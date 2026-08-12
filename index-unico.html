@@ -938,8 +938,12 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 .faq-item{border-bottom:1px solid var(--color-border)}
 .faq-item summary{
   display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);
-  min-height:56px;                 /* alvo de toque confortável */
-  padding-block:var(--space-3);
+  /* Respiro calibrado pelo print: lá o passo entre divisórias é 15,8% da
+     largura da tela; com 20px de padding o nosso dá 16,0%. Os 20px são o
+     micro-ajuste de 4px sobre o 16 da escala do DS. O min-height fica só
+     como piso de alvo de toque. */
+  min-height:56px;
+  padding-block:20px;
   cursor:pointer;
   list-style:none;
   font-family:var(--font-heading);
