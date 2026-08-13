@@ -570,26 +570,37 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   display:flex;flex-wrap:wrap;gap:var(--space-3);
 }
 
-/* Card de preço */
+/* Card de preço.
+   Menos "tabela de preços", mais peça editorial pousada no degradê do hero:
+   canto mais contido, borda quase invisível e o preço sozinho no centro de
+   muito espaço vazio. O que segura o card na página não é o contorno, é a
+   sombra — larga, difusa e puxada para o roxo do fundo, de modo que a peça
+   pareça flutuar sobre o degradê em vez de ser recortada por cima dele. */
 .price-card{
   background:var(--color-surface);
-  border:1px solid var(--color-border);
-  border-radius:var(--radius-xl);
-  padding:var(--space-5);
-  box-shadow:var(--shadow-md);
+  border:1px solid rgba(20,20,20,.05);
+  border-radius:var(--radius-lg);
+  padding:var(--space-6) var(--space-5);
+  box-shadow:
+    0 1px 2px rgba(20,20,20,.02),
+    0 30px 56px -34px rgba(109,94,240,.30);
   text-align:center;
   position:relative;
   overflow:hidden;
 }
+/* O fio colorido do topo continua, só que fio mesmo: em 5px ele lia como
+   faixa e puxava o olho antes do preço. */
 .price-card::before{
   content:"";
-  position:absolute;inset:0 0 auto;height:5px;
+  position:absolute;inset:0 0 auto;height:3px;
   background:linear-gradient(90deg,var(--color-brand),var(--color-primary));
 }
 .price-card .label{color:var(--color-text-muted)}
 .price-value{
   display:block;
-  margin-block:var(--space-2);
+  /* Respiro assimétrico: solto do rótulo acima, próximo dos termos abaixo —
+     é o que amarra os dois como uma coisa só e deixa o preço reinar. */
+  margin-block:var(--space-3) var(--space-2);
   font-family:var(--font-heading);
   font-size:clamp(3rem,2.2rem + 4vw,4.5rem);
   line-height:1;
@@ -600,9 +611,10 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 .price-terms{
   display:inline-flex;flex-wrap:wrap;justify-content:center;gap:var(--space-2);
   color:var(--color-text-muted);
-  font-size:var(--fs-body);
+  font-size:var(--fs-caption);
+  line-height:var(--lh-caption);
 }
-.price-card .btn{margin-top:var(--space-4)}
+.price-card .btn{margin-top:var(--space-5)}
 
 /* Marquee */
 .marquee{
@@ -1195,7 +1207,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
-  .price-card{padding:var(--space-6)}
+  .price-card{padding:var(--space-7) var(--space-6)}
   .final-cta{padding-inline:var(--space-7)}
   /* daqui para cima o card já bateu no teto de 560px e para de crescer, então
      a volta pode ser mais longa sem a esteira ficar arrastada */
