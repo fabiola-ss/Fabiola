@@ -676,15 +676,19 @@ ul.reel-group{padding-right:var(--reel-gap)}
 /* As duas fileiras têm agora a mesma largura de grupo, então a mesma duração
    dá a mesma velocidade nos dois sentidos. O valor é recalculado por faixa
    de tela (o card cresce com a viewport) para o passo ficar sempre na casa
-   dos 25–35px/s: lento o bastante para ler cada home com calma. */
-.js .reel--left .reel-track{animation:reel-left 36s linear infinite}
-.js .reel--right .reel-track{animation:reel-right 36s linear infinite}
+   dos 45–70px/s. */
+.js .reel--left .reel-track{animation:reel-left 18s linear infinite}
+.js .reel--right .reel-track{animation:reel-right 18s linear infinite}
 /* Encostar o dedo ou o mouse congela a fileira para examinar um projeto —
    é a única coisa que a interação faz. Soltar volta de onde parou, sem salto.
    O .is-held é o toque: no celular o :active some assim que o dedo desliza. */
-.reel:hover .reel-track,
-.reel:active .reel-track,
 .reel.is-held .reel-track{animation-play-state:paused}
+/* :hover só onde hover existe de verdade. No celular o navegador finge um
+   hover depois do toque e o mantém até você tocar em outro lugar — era isso
+   que deixava a fileira congelada depois de tirar o dedo. */
+@media (hover:hover) and (pointer:fine){
+  .reel:hover .reel-track{animation-play-state:paused}
+}
 
 /* O card é a captura e nada mais: sem barra branca embaixo, sem nome, sem
    segmento, sem seta, sem selo. Cantos generosos, sombra quase imperceptível
@@ -1331,8 +1335,8 @@ ul.reel-group{padding-right:var(--reel-gap)}
   /* O card cresce junto com a tela; o respiro entre eles e a duração da volta
      crescem no mesmo passo para a esteira manter a mesma velocidade de leitura. */
   .reels{--reel-gap:var(--space-4)}
-  .js .reel--left .reel-track{animation-duration:46s}
-  .js .reel--right .reel-track{animation-duration:46s}
+  .js .reel--left .reel-track{animation-duration:24s}
+  .js .reel--right .reel-track{animation-duration:24s}
 }
 
 /* Tablet largo / desktop pequeno — 768px+ */
@@ -1345,16 +1349,14 @@ ul.reel-group{padding-right:var(--reel-gap)}
   .final-cta{padding-inline:var(--space-7)}
   /* daqui para cima o card já bateu no teto de 560px e para de crescer, então
      a volta pode ser mais longa sem a esteira ficar arrastada */
-  .js .reel--left .reel-track{animation-duration:52s}
-  .js .reel--right .reel-track{animation-duration:52s}
+  .js .reel--left .reel-track{animation-duration:26s}
+  .js .reel--right .reel-track{animation-duration:26s}
 }
 
 /* Desktop — 1025px+ (grid completo, hero em 2 colunas) */
 @media (min-width:1025px){
   :root{--gutter:80px}
   .reels{--reel-gap:var(--space-5)}
-  .js .reel--left .reel-track{animation-duration:52s}
-  .js .reel--right .reel-track{animation-duration:52s}
   .hero{padding-block:var(--space-8) var(--space-7)}
   .hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:var(--space-7)}
   .steps-grid{grid-template-columns:repeat(4,1fr)}
@@ -2288,15 +2290,27 @@ ul.reel-group{padding-right:var(--reel-gap)}
      pausa fica presa a pointerdown/pointerup, que sobrevivem ao movimento.
      Só pausa: nada aqui abre, amplia ou navega.
      ------------------------------------------------------------------ */
-  document.querySelectorAll('.reel').forEach(function (reel) {
-    function hold() { reel.classList.add('is-held'); }
-    function release() { reel.classList.remove('is-held'); }
+  var reels = document.querySelectorAll('.reel');
 
-    reel.addEventListener('pointerdown', hold, { passive: true });
-    reel.addEventListener('pointercancel', release, { passive: true });
-    /* solta mesmo se o dedo terminar fora da fileira */
-    window.addEventListener('pointerup', release, { passive: true });
+  function releaseReels() {
+    reels.forEach(function (reel) { reel.classList.remove('is-held'); });
+  }
+
+  reels.forEach(function (reel) {
+    reel.addEventListener('pointerdown', function () {
+      reel.classList.add('is-held');
+    }, { passive: true });
   });
+
+  /* Soltar é ouvido na janela, e por todos os caminhos que o dedo pode tomar:
+     terminar fora da fileira, virar rolagem da página (pointercancel), ou o
+     navegador engolir o pointerup e mandar só o touchend. Se qualquer um
+     desses falhasse, a esteira ficava parada para sempre. */
+  ['pointerup', 'pointercancel', 'touchend', 'touchcancel', 'blur']
+    .forEach(function (ev) {
+      window.addEventListener(ev, releaseReels, { passive: true });
+    });
+  document.addEventListener('visibilitychange', releaseReels);
 
   /* ------------------------------------------------------------------
      Efeitos de ponteiro fino (mouse/trackpad): tilt 3D e botão magnético.
