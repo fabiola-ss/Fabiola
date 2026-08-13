@@ -572,17 +572,18 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 
 /* Card de preço.
    Não é um card de tabela de preços: é uma lâmina de vidro pousada no degradê
-   do hero. Branco translúcido em vez de branco chapado, sem borda e sem
-   contorno — o degradê atravessa a peça e é isso que a integra ao fundo em
-   vez de recortá-la por cima dele. Quem marca o limite é só o desfoque do que
-   está atrás, mais o fio colorido no topo. */
+   do hero. Branco translúcido em vez de branco chapado — o degradê atravessa
+   a peça e é isso que a integra ao fundo em vez de recortá-la por cima dele.
+   A borda é branca e translúcida também: não desenha um contorno, faz o
+   brilho de quina que o vidro tem quando pega a luz do que está atrás.
+   E é baixo de propósito: um filete de informação, não um bloco. */
 .price-card{
   background:rgba(255,255,255,.78);
   -webkit-backdrop-filter:blur(18px) saturate(1.2);
   backdrop-filter:blur(18px) saturate(1.2);
-  border:0;
+  border:1px solid rgba(255,255,255,.55);
   border-radius:var(--radius-lg);
-  padding:var(--space-6) var(--space-5);
+  padding:var(--space-4) var(--space-5);
   /* sombra quase nula: só o bastante para a lâmina não parecer colada */
   box-shadow:0 30px 60px -44px rgba(109,94,240,.35);
   text-align:center;
@@ -1214,7 +1215,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
-  .price-card{padding:var(--space-7) var(--space-6)}
+  .price-card{padding:var(--space-5) var(--space-6)}
   .final-cta{padding-inline:var(--space-7)}
   /* daqui para cima o card já bateu no teto de 560px e para de crescer, então
      a volta pode ser mais longa sem a esteira ficar arrastada */
