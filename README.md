@@ -41,5 +41,9 @@ Netlify.
 
 - Os links de WhatsApp usam o número provisório `5500000000000`. Procure por
   `wa.me/5500000000000` no `index.html` e troque pelo número real.
-- As miniaturas do portfólio e as imagens do antes/depois são representações
-  feitas em código, não capturas dos sites reais.
+- O portfólio mostra 6 projetos, com a captura real da home de cada um. Faltam
+  as capturas de **Total Skin**, **BCorporate** e **Grupo VT Rads** — os cards
+  agora são só imagem, então esses três saíram da esteira até as capturas
+  chegarem. Mande os prints e eles voltam.
+- As imagens do antes/depois são representações feitas em código, não capturas
+  dos sites reais.
