@@ -728,155 +728,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 }
 
 /* ==========================================================================
-   9. ANTES E DEPOIS
-   ========================================================================== */
-.compare{
-  position:relative;
-  /* No celular o deitado dava uma faixa baixa demais para enxergar um site.
-     Em retrato cabe muito mais página; do tablet para cima volta ao 16/10. */
-  aspect-ratio:3/4;
-  border-radius:var(--radius-xl);
-  overflow:hidden;
-  border:1px solid var(--color-border);
-  box-shadow:var(--shadow-md);
-  background:var(--color-surface);
-  touch-action:pan-y;
-  user-select:none;
-  -webkit-user-select:none;
-}
-/* Cada painel guarda um iframe MUITO alto dentro de uma janela recortada.
-   Quem move essa janela é o JS, a partir de quanto o card já atravessou a
-   tela — o dedo não rola nada aqui dentro. Rolar o documento de dentro do
-   iframe seria impossível de acompanhar por ser outra origem, e o
-   antes/depois dessincronizaria ao primeiro gesto. */
-/* Os DOIS painéis são absolutos: com um deles no fluxo, o iframe de 2600px
-   ditava a altura do card e o aspect-ratio era ignorado — o painel nunca
-   chegava a ser menor que o conteúdo, então não rolava. */
-.compare-pane{position:absolute;inset:0;line-height:0}
-.compare-scroll{
-  height:100%;
-  /* hidden, não clip: continua sendo caixa de rolagem para o scrollTop que o
-     JS escreve, mas não captura mais gesto nenhum. Era isso que sequestrava
-     a rolagem vertical da página em cima do card. */
-  overflow:hidden;
-}
-/* O site é renderizado numa largura de DESKTOP e reduzido por escala, senão
-   o iframe estreito faria o próprio site servir o layout de celular.
-   transform:scale não afeta o layout, então o contêiner continuaria achando
-   que o quadro tem a altura inteira e a rolagem passaria do fim: por isso o
-   "sizer", que tem a proporção do quadro e carrega a altura já reduzida. */
-/* sem unidade: aspect-ratio só aceita número, e o px entra no calc */
-.compare{--frame-w:1440;--frame-h:4200;--frame-scale:1}
-.compare-frame-sizer{
-  position:relative;
-  width:100%;
-  aspect-ratio:var(--frame-w) / var(--frame-h);
-  overflow:hidden;
-}
-.compare-frame{
-  display:block;
-  width:calc(var(--frame-w) * 1px);
-  height:calc(var(--frame-h) * 1px);
-  transform:scale(var(--frame-scale));
-  transform-origin:top left;
-  border:0;
-  background:var(--color-surface);
-}
-.compare-pane--before{
-  overflow:hidden;
-  clip-path:inset(0 0 0 var(--pos,50%));
-}
-
-.compare-badge{
-  position:absolute;
-  top:var(--space-3);
-  z-index:3;
-  padding:7px 14px;
-  border-radius:var(--radius-full);
-  font-size:var(--fs-caption);
-  font-weight:600;
-  letter-spacing:.04em;
-  line-height:var(--lh-caption);
-  pointer-events:none;
-}
-.compare-badge--after{left:var(--space-3);background:var(--color-primary);color:var(--color-text-primary)}
-.compare-badge--before{right:var(--space-3);background:var(--color-bg-dark);color:var(--color-text-on-dark)}
-/* No celular os dois crachás não cabem lado a lado e se sobrepõem: o do
-   "antes" desce para o rodapé do card, ainda do lado dele. */
-@media (max-width:600px){
-  /* Cada pixel conta: mostrando um layout de 1440px num card estreito, a
-     margem lateral custava 15% de escala. Sangra até a borda da tela. */
-  .compare{margin-inline:calc(-1 * var(--gutter));border-radius:0;border-inline:0}
-  .compare-badge{font-size:.6875rem;padding:6px 11px}
-  .compare-badge--before{top:auto;bottom:var(--space-3)}
-}
-
-.compare-divider{
-  position:absolute;
-  top:0;bottom:0;
-  left:var(--pos,50%);
-  width:3px;
-  margin-left:-1.5px;
-  background:var(--color-surface);
-  box-shadow:0 0 0 1px rgba(20,20,20,.12);
-  z-index:4;
-  pointer-events:none;
-}
-/* A bolinha é a única parte que captura o ponteiro, e touch-action:none
-   libera o arrasto horizontal nela sem travar a rolagem no resto do card. */
-.compare-handle{
-  pointer-events:auto;
-  touch-action:none;
-  cursor:ew-resize;
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:52px;height:52px;
-  border-radius:50%;
-  background:var(--color-primary);
-  border:3px solid var(--color-surface);
-  box-shadow:var(--shadow-md);
-  display:grid;place-items:center;
-  color:var(--color-text-primary);
-}
-/* Range nativo por cima: arraste + teclado, acessível */
-.compare-range{
-  position:absolute;
-  /* Só uma tira no meio, e não a superfície toda: fora dela o painel fica
-     livre para rolar. A largura continua sendo a total, então o valor do
-     range segue mapeando a posição da barra corretamente. */
-  left:0;right:0;
-  top:50%;
-  height:76px;
-  transform:translateY(-50%);
-  z-index:5;
-  width:100%;
-  margin:0;
-  background:transparent;
-  appearance:none;-webkit-appearance:none;
-  /* Inerte ao ponteiro: cobrindo a faixa central, ele engolia o gesto de
-     rolar e o transformava em arrastar. Continua alcançável por Tab, e as
-     setas seguem movendo a barra; arrastar agora é só pela bolinha. */
-  pointer-events:none;
-}
-.compare-range::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;
-  width:56px;height:220px;background:transparent;cursor:ew-resize;
-}
-.compare-range::-moz-range-thumb{
-  width:56px;height:220px;background:transparent;border:0;cursor:ew-resize;
-}
-.compare:has(.compare-range:focus-visible) .compare-handle{outline:3px solid var(--color-focus);outline-offset:3px}
-.compare-hint{
-  margin-top:var(--space-3);
-  display:flex;align-items:center;justify-content:center;gap:var(--space-2);
-  color:var(--color-text-muted);
-  font-size:var(--fs-caption);
-  letter-spacing:.04em;
-}
-
-/* ==========================================================================
-   10. PROBLEMA / SOLUÇÃO
+   9. PROBLEMA / SOLUÇÃO
    ========================================================================== */
 /* Bloco editorial: título com ênfase + duas afirmações em texto corrido */
 .reason-block{
@@ -899,7 +751,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 }
 
 /* ==========================================================================
-   11. BLOCO ESCURO (BENEFÍCIOS)
+   10. BLOCO ESCURO (BENEFÍCIOS)
    ========================================================================== */
 .panel-dark{
   background:var(--color-bg-dark);
@@ -949,7 +801,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 }
 
 /* ==========================================================================
-   12. COMO FUNCIONA — cards verde-neon
+   11. COMO FUNCIONA — cards verde-neon
    ========================================================================== */
 .steps-grid{display:grid;grid-template-columns:1fr;gap:var(--space-4)}
 .step-card{
@@ -974,7 +826,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .step-card p{color:rgba(20,20,20,.74)}
 
 /* ==========================================================================
-   13. COMPARATIVO DE PREÇO
+   12. COMPARATIVO DE PREÇO
    ========================================================================== */
 .compare-grid{display:grid;grid-template-columns:1fr;gap:var(--space-4);align-items:stretch}
 .plan{
@@ -1021,7 +873,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .plan .btn{margin-top:auto}
 
 /* ==========================================================================
-   14. GARANTIA
+   13. GARANTIA
    ========================================================================== */
 .guarantee{
   background:var(--color-surface);
@@ -1036,7 +888,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .guarantee p{max-width:56ch;color:var(--color-text-muted);font-size:var(--fs-body-lg)}
 
 /* ==========================================================================
-   15. PARA QUEM É
+   14. PARA QUEM É
    ========================================================================== */
 .audience-list{display:flex;flex-wrap:wrap;gap:var(--space-3)}
 .audience-list li{
@@ -1057,7 +909,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 }
 
 /* ==========================================================================
-   16. FAQ
+   15. FAQ
    ========================================================================== */
 /* Lista corrida: sem card, sem sombra, só uma divisória fina entre as
    perguntas. Cada item herda o fundo da seção. */
@@ -1103,7 +955,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .faq-answer a:hover{color:var(--color-brand-hover)}
 
 /* ==========================================================================
-   17. CTA FINAL
+   16. CTA FINAL
    ========================================================================== */
 .final-cta{
   border-radius:var(--radius-xl);
@@ -1126,7 +978,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 }
 
 /* ==========================================================================
-   18. FOOTER
+   17. FOOTER
    ========================================================================== */
 .site-footer{
   background:var(--color-bg-dark);
@@ -1155,7 +1007,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .footer-link:hover .arrow{transform:translateX(4px)}
 
 /* ==========================================================================
-   19. ANIMAÇÕES DE ENTRADA
+   18. ANIMAÇÕES DE ENTRADA
    ========================================================================== */
 /* Progressive enhancement: o estado inicial escondido só vale quando o script
    inicial marcou o elemento raiz com a classe "js". Sem JS, tudo aparece. */
@@ -1315,7 +1167,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 .btn[data-magnetic]{will-change:transform}
 
 /* ==========================================================================
-   20. BREAKPOINTS
+   19. BREAKPOINTS
    ========================================================================== */
 
 /* Tablet — 481px+ (2 colunas em cards/grids) */
@@ -1341,7 +1193,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
 /* Tablet largo / desktop pequeno — 768px+ */
 @media (min-width:768px){
   :root{--gutter:var(--space-6);--section-y:var(--space-8);--header-h:76px}
-  .compare{aspect-ratio:16/10}
   .hero-actions{align-items:center}
   .compare-grid{grid-template-columns:repeat(2,1fr)}
   .price-card{padding:var(--space-6)}
@@ -1425,7 +1276,7 @@ ul.reel-group{padding-right:var(--reel-gap)}
 
 /* Impressão */
 @media print{
-  .site-header,.marquee,.compare-range{display:none}
+  .site-header,.marquee{display:none}
   body{background:#fff}
 }
 </style>
@@ -1454,7 +1305,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
     <nav class="nav" aria-label="Navegação principal">
       <ul class="nav-list">
         <li><a class="nav-link" href="#portfolio">Portfólio</a></li>
-        <li><a class="nav-link" href="#antes-e-depois">Antes e depois</a></li>
         <li><a class="nav-link" href="#beneficios">Benefícios</a></li>
         <li><a class="nav-link" href="#como-funciona">Como funciona</a></li>
         <li><a class="nav-link" href="#precos">Preço</a></li>
@@ -1477,7 +1327,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
     <div class="container">
       <ul>
         <li><a href="#portfolio">Portfólio</a></li>
-        <li><a href="#antes-e-depois">Antes e depois</a></li>
         <li><a href="#beneficios">Benefícios</a></li>
         <li><a href="#como-funciona">Como funciona</a></li>
         <li><a href="#precos">Preço</a></li>
@@ -1641,74 +1490,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
     </div>
   </section>
 
-  <!-- ======================================================================
-       3. ANTES E DEPOIS
-       ====================================================================== -->
-  <section class="section" id="antes-e-depois" aria-labelledby="antes-title">
-    <div class="container">
-
-      <div class="section-head reveal">
-        <p class="tag label">Antes e depois</p>
-        <h2 id="antes-title">De um site antigo para uma <span class="em-brand">presença digital de verdade</span>.</h2>
-        <p class="body-lg text-muted lead">
-          Arraste a barra para comparar o antes e o depois do site do Airton Rafael.
-          Mesmo cliente, novo posicionamento.
-        </p>
-      </div>
-
-      <div class="reveal">
-        <div class="compare" id="compare" style="--pos:50%">
-
-          <!-- Painel "depois" (base) -->
-          <div class="compare-pane compare-pane--after">
-            <div class="compare-scroll" data-sync>
-              <div class="compare-frame-sizer">
-                <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
-                      sandbox="allow-same-origin allow-scripts allow-popups"
-                      title="Depois — novo site do Airton Rafael"
-                      src="https://airtonrafael.com.br/"></iframe>
-              </div>
-            </div>
-          </div>
-
-          <!-- Painel "antes" (sobreposto, recortado pela barra) -->
-          <div class="compare-pane compare-pane--before" id="comparePaneBefore">
-            <div class="compare-scroll" data-sync>
-              <div class="compare-frame-sizer">
-                <iframe class="compare-frame" loading="lazy" referrerpolicy="no-referrer"
-                      sandbox="allow-same-origin allow-scripts allow-popups"
-                      title="Antes — site antigo do Airton Rafael"
-                      src="https://airtonrafael.com/"></iframe>
-              </div>
-            </div>
-          </div>
-
-          <p class="compare-badge compare-badge--after">Depois — Novo site</p>
-          <p class="compare-badge compare-badge--before">Antes — Site antigo</p>
-
-          <div class="compare-divider" aria-hidden="true">
-            <span class="compare-handle">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M9 6 4 12l5 6M15 6l5 6-5 6"/>
-              </svg>
-            </span>
-          </div>
-
-          <input class="compare-range" id="compareRange" type="range" min="0" max="100" step="0.5" value="50"
-                 aria-label="Arraste a bolinha para comparar o antes e o depois do site"
-                 aria-valuetext="Metade do novo site visível">
-        </div>
-
-        <p class="compare-hint">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6 4 12l5 6M15 6l5 6-5 6"/>
-          </svg>
-          Arraste a bolinha para comparar
-        </p>
-      </div>
-
-    </div>
-  </section>
 
   <!-- ======================================================================
        4. PROBLEMA / SOLUÇÃO
@@ -2094,99 +1875,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
   }
 
   /* ------------------------------------------------------------------
-     Comparador antes/depois
-     ------------------------------------------------------------------ */
-  var compare = document.getElementById('compare');
-  var range = document.getElementById('compareRange');
-  var setPosition = null;      /* escopo da IIFE: a demo automática usa isso adiante */
-  var atualizarCompare = null; /* o handler de scroll lá embaixo chama este */
-
-  if (compare && range) {
-    var divider = compare.querySelector('.compare-divider');
-
-    setPosition = function (value) {
-      var pct = Math.min(100, Math.max(0, Number(value)));
-      compare.style.setProperty('--pos', pct + '%');
-      if (divider) divider.style.left = pct + '%';
-      range.setAttribute('aria-valuetext', Math.round(pct) + '% do novo site visível');
-    };
-
-    range.addEventListener('input', function () { setPosition(range.value); });
-    setPosition(range.value);
-
-    /* A escala precisa ser um número, e nenhuma unidade de CSS exprime
-       "largura do card dividida pela largura de desktop" — daí o cálculo aqui,
-       refeito sempre que o card muda de tamanho. */
-    function ajustarEscala() {
-      var largura = compare.clientWidth;
-      var alvo = parseFloat(getComputedStyle(compare).getPropertyValue('--frame-w')) || 1440;
-      compare.style.setProperty('--frame-scale', (largura / alvo).toFixed(5));
-    }
-    ajustarEscala();
-    if ('ResizeObserver' in window) new ResizeObserver(ajustarEscala).observe(compare);
-    else window.addEventListener('resize', ajustarEscala, { passive: true });
-
-    /* Arrastar pela bolinha. Substitui o arrasto que o range fazia quando
-       cobria o card inteiro — que era o que impedia a rolagem. */
-    var bolinha = compare.querySelector('.compare-handle');
-    if (bolinha) {
-      var arrastando = false;
-
-      bolinha.addEventListener('pointerdown', function (e) {
-        arrastando = true;
-        try { bolinha.setPointerCapture(e.pointerId); } catch (_) {}
-        e.preventDefault();
-      });
-
-      bolinha.addEventListener('pointermove', function (e) {
-        if (!arrastando) return;
-        var r = compare.getBoundingClientRect();
-        var pct = ((e.clientX - r.left) / r.width) * 100;
-        range.value = pct;
-        setPosition(pct);
-      });
-
-      ['pointerup', 'pointercancel'].forEach(function (ev) {
-        bolinha.addEventListener(ev, function (e) {
-          arrastando = false;
-          try { bolinha.releasePointerCapture(e.pointerId); } catch (_) {}
-        });
-      });
-    }
-
-    /* Quem rola os dois sites é a página, não o dedo.
-       Antes cada painel era um contêiner de rolagem: um gesto vertical em
-       cima do card rolava o site de dentro, e a página só começava a andar
-       depois de esgotar uns 600px de conteúdo interno. No celular, onde o
-       card ocupa quase a tela toda, isso dava a sensação de página travada.
-       Agora a posição dos dois painéis é lida de quanto o card já atravessou
-       a tela: o gesto vertical volta a ser sempre da página, e os dois lados
-       ficam sincronizados por construção, sem eco de um no outro. */
-    var paineis = compare.querySelectorAll('[data-sync]');
-    var RITMO = 0.45;    /* px de site por px de página: passo de parallax */
-    var JANELA = 0.55;   /* fatia central do trajeto em que a rolagem acontece */
-
-    atualizarCompare = function () {
-      var r = compare.getBoundingClientRect();
-      var vh = window.innerHeight || 0;
-      var trajeto = vh + r.height;   /* de entrar pelo pé da tela a sair pelo topo */
-      if (trajeto <= 0) return;
-      var bruto = (vh - r.top) / trajeto;
-      var p = clamp01((bruto - (1 - JANELA) / 2) / JANELA);
-      /* O passo é fixo, e o quanto se percorre nasce dele — daí o topo do site
-         ficar parado enquanto o card entra e o fim ficar parado enquanto sai. */
-      var passeio = trajeto * JANELA * RITMO;
-      paineis.forEach(function (painel) {
-        var limite = painel.scrollHeight - painel.clientHeight;
-        painel.scrollTop = Math.min(limite, passeio) * p;
-      });
-    };
-
-    if (reduceMotion) atualizarCompare = null;   /* fica na dobra, sem passeio */
-    else atualizarCompare();
-  }
-
-  /* ------------------------------------------------------------------
      Revelação no scroll (fade-in + translateY, stagger via --i)
      ------------------------------------------------------------------ */
   var revealables = document.querySelectorAll('.reveal');
@@ -2279,9 +1967,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
       var span = r.height + vh * 0.5;
       stepsTrack.style.setProperty('--p', span > 0 ? clamp01((vh * 0.85 - r.top) / span) : 0);
     }
-
-    /* Os dois sites do antes/depois passeiam junto com a página */
-    if (atualizarCompare) atualizarCompare();
 
     /* O fundo escurece à medida que o bloco final se aproxima */
     if (endDim && contato) {
