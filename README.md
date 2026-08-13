@@ -45,5 +45,8 @@ Netlify.
   as capturas de **Total Skin**, **BCorporate** e **Grupo VT Rads** — os cards
   agora são só imagem, então esses três saíram da esteira até as capturas
   chegarem. Mande os prints e eles voltam.
-- As imagens do antes/depois são representações feitas em código, não capturas
-  dos sites reais.
+- O antes/depois embute os dois sites do Airton ao vivo (`airtonrafael.com` e
+  `airtonrafael.com.br`). Daqui não consigo abrir nenhum dos dois para testar,
+  então confira no site publicado se os dois aparecem — se algum vier em
+  branco, é o servidor dele recusando ser embutido (`X-Frame-Options`), e aí a
+  saída é trocar por uma captura de tela.

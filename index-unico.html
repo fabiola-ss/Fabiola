@@ -744,22 +744,21 @@ ul.reel-group{padding-right:var(--reel-gap)}
   user-select:none;
   -webkit-user-select:none;
 }
-/* Cada painel é um contêiner de rolagem próprio com um iframe MUITO alto
-   dentro. Assim quem rola é o contêiner, que é meu — e por ser meu, dá para
-   sincronizar os dois lados. Rolar o documento de dentro do iframe seria
-   impossível de acompanhar por ser outra origem, e o antes/depois
-   dessincronizaria ao primeiro gesto. */
+/* Cada painel guarda um iframe MUITO alto dentro de uma janela recortada.
+   Quem move essa janela é o JS, a partir de quanto o card já atravessou a
+   tela — o dedo não rola nada aqui dentro. Rolar o documento de dentro do
+   iframe seria impossível de acompanhar por ser outra origem, e o
+   antes/depois dessincronizaria ao primeiro gesto. */
 /* Os DOIS painéis são absolutos: com um deles no fluxo, o iframe de 2600px
    ditava a altura do card e o aspect-ratio era ignorado — o painel nunca
    chegava a ser menor que o conteúdo, então não rolava. */
 .compare-pane{position:absolute;inset:0;line-height:0}
 .compare-scroll{
   height:100%;
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  /* sem overscroll-behavior:contain de propósito: ao chegar ao fim, a
-     rolagem encadeia para a página e o visitante não fica preso aqui */
+  /* hidden, não clip: continua sendo caixa de rolagem para o scrollTop que o
+     JS escreve, mas não captura mais gesto nenhum. Era isso que sequestrava
+     a rolagem vertical da página em cima do card. */
+  overflow:hidden;
 }
 /* O site é renderizado numa largura de DESKTOP e reduzido por escala, senão
    o iframe estreito faria o próprio site servir o layout de celular.
@@ -2099,7 +2098,8 @@ ul.reel-group{padding-right:var(--reel-gap)}
      ------------------------------------------------------------------ */
   var compare = document.getElementById('compare');
   var range = document.getElementById('compareRange');
-  var setPosition = null;   /* escopo da IIFE: a demo automática usa isso adiante */
+  var setPosition = null;      /* escopo da IIFE: a demo automática usa isso adiante */
+  var atualizarCompare = null; /* o handler de scroll lá embaixo chama este */
 
   if (compare && range) {
     var divider = compare.querySelector('.compare-divider');
@@ -2154,22 +2154,36 @@ ul.reel-group{padding-right:var(--reel-gap)}
       });
     }
 
-    /* Rolar um painel rola o outro na mesma medida: sem isso o antes e o
-       depois sairiam de sincronia e a comparação perderia o sentido.
-       A trava evita o eco de um painel disparar o outro de volta. */
+    /* Quem rola os dois sites é a página, não o dedo.
+       Antes cada painel era um contêiner de rolagem: um gesto vertical em
+       cima do card rolava o site de dentro, e a página só começava a andar
+       depois de esgotar uns 600px de conteúdo interno. No celular, onde o
+       card ocupa quase a tela toda, isso dava a sensação de página travada.
+       Agora a posição dos dois painéis é lida de quanto o card já atravessou
+       a tela: o gesto vertical volta a ser sempre da página, e os dois lados
+       ficam sincronizados por construção, sem eco de um no outro. */
     var paineis = compare.querySelectorAll('[data-sync]');
-    var sincronizando = false;
+    var RITMO = 0.45;    /* px de site por px de página: passo de parallax */
+    var JANELA = 0.55;   /* fatia central do trajeto em que a rolagem acontece */
 
-    paineis.forEach(function (painel) {
-      painel.addEventListener('scroll', function () {
-        if (sincronizando) return;
-        sincronizando = true;
-        paineis.forEach(function (outro) {
-          if (outro !== painel) outro.scrollTop = painel.scrollTop;
-        });
-        requestAnimationFrame(function () { sincronizando = false; });
-      }, { passive: true });
-    });
+    atualizarCompare = function () {
+      var r = compare.getBoundingClientRect();
+      var vh = window.innerHeight || 0;
+      var trajeto = vh + r.height;   /* de entrar pelo pé da tela a sair pelo topo */
+      if (trajeto <= 0) return;
+      var bruto = (vh - r.top) / trajeto;
+      var p = clamp01((bruto - (1 - JANELA) / 2) / JANELA);
+      /* O passo é fixo, e o quanto se percorre nasce dele — daí o topo do site
+         ficar parado enquanto o card entra e o fim ficar parado enquanto sai. */
+      var passeio = trajeto * JANELA * RITMO;
+      paineis.forEach(function (painel) {
+        var limite = painel.scrollHeight - painel.clientHeight;
+        painel.scrollTop = Math.min(limite, passeio) * p;
+      });
+    };
+
+    if (reduceMotion) atualizarCompare = null;   /* fica na dobra, sem passeio */
+    else atualizarCompare();
   }
 
   /* ------------------------------------------------------------------
@@ -2265,6 +2279,9 @@ ul.reel-group{padding-right:var(--reel-gap)}
       var span = r.height + vh * 0.5;
       stepsTrack.style.setProperty('--p', span > 0 ? clamp01((vh * 0.85 - r.top) / span) : 0);
     }
+
+    /* Os dois sites do antes/depois passeiam junto com a página */
+    if (atualizarCompare) atualizarCompare();
 
     /* O fundo escurece à medida que o bloco final se aproxima */
     if (endDim && contato) {
