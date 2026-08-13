@@ -571,29 +571,37 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
 }
 
 /* Card de preço.
-   Menos "tabela de preços", mais peça editorial pousada no degradê do hero:
-   canto mais contido, borda quase invisível e o preço sozinho no centro de
-   muito espaço vazio. O que segura o card na página não é o contorno, é a
-   sombra — larga, difusa e puxada para o roxo do fundo, de modo que a peça
-   pareça flutuar sobre o degradê em vez de ser recortada por cima dele. */
+   Não é um card de tabela de preços: é uma lâmina de vidro pousada no degradê
+   do hero. Branco translúcido em vez de branco chapado, sem borda e sem
+   contorno — o degradê atravessa a peça e é isso que a integra ao fundo em
+   vez de recortá-la por cima dele. Quem marca o limite é só o desfoque do que
+   está atrás, mais o fio colorido no topo. */
 .price-card{
-  background:var(--color-surface);
-  border:1px solid rgba(20,20,20,.05);
+  background:rgba(255,255,255,.78);
+  -webkit-backdrop-filter:blur(18px) saturate(1.2);
+  backdrop-filter:blur(18px) saturate(1.2);
+  border:0;
   border-radius:var(--radius-lg);
   padding:var(--space-6) var(--space-5);
-  box-shadow:
-    0 1px 2px rgba(20,20,20,.02),
-    0 30px 56px -34px rgba(109,94,240,.30);
+  /* sombra quase nula: só o bastante para a lâmina não parecer colada */
+  box-shadow:0 30px 60px -44px rgba(109,94,240,.35);
   text-align:center;
   position:relative;
   overflow:hidden;
 }
-/* O fio colorido do topo continua, só que fio mesmo: em 5px ele lia como
-   faixa e puxava o olho antes do preço. */
+/* Sem desfoque de fundo (Firefox antigo), o translúcido deixaria o texto
+   sobre o degradê cru. Aí o branco fecha quase por completo. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .price-card{background:rgba(255,255,255,.88)}
+}
+/* O fio colorido do topo continua, agora esmaecendo nas pontas: cortado a
+   pique ele redesenhava a caixa que o resto do card acabou de dissolver. */
 .price-card::before{
   content:"";
   position:absolute;inset:0 0 auto;height:3px;
   background:linear-gradient(90deg,var(--color-brand),var(--color-primary));
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
 }
 .price-card .label{color:var(--color-text-muted)}
 .price-value{
@@ -614,7 +622,6 @@ h3{font-size:var(--fs-h3);line-height:var(--lh-h3);font-weight:600}
   font-size:var(--fs-caption);
   line-height:var(--lh-caption);
 }
-.price-card .btn{margin-top:var(--space-5)}
 
 /* Marquee */
 .marquee{
@@ -1409,9 +1416,6 @@ ul.reel-group{padding-right:var(--reel-gap)}
         <p class="price-terms">
           <span>Pagamento único</span><span aria-hidden="true">·</span><span>Sem mensalidade</span>
         </p>
-        <a class="btn btn-primary btn-trace btn-block" href="https://wa.me/5500000000000">
-          Quero meu site <span class="arrow" aria-hidden="true">→</span>
-        </a>
       </div>
 
     </div>
