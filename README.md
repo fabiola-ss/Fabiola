@@ -45,6 +45,19 @@ Se a mudança não aparecer no navegador, é cache: recarregue com Ctrl+Shift+R
 | `gera-favicon.py` | Refaz os ícones a partir da `logo.png`. Rode se a logo mudar. |
 | `CNAME`, `.nojekyll` | Configuração do GitHub Pages (ver acima). |
 
+## Medição
+
+O Meta Pixel `2605777323185034` está instalado no `index.html` — código base no
+`<head>`, `<noscript>` logo depois do `<body>`.
+
+Como todos os CTAs levam para o WhatsApp, não existe página de obrigado para
+marcar a conversão. Então **o clique é o evento**: qualquer link de WhatsApp
+dispara `Contact` com o lugar de onde partiu (`inicio`, `precos`, `faq`,
+`contato`, `header`, `footer`), o que permite comparar qual seção converte.
+
+No Gerenciador de Anúncios, escolha **Contact** como evento de conversão da
+campanha — não "visualizações de página".
+
 ## Pendências
 
 - Os 9 links de WhatsApp apontam para `5521996891354`, com a mensagem já

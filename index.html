@@ -11,6 +11,20 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 
+<!-- Meta Pixel 2605777323185034 -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2605777323185034');
+fbq('track','PageView');
+</script>
+
 <!-- Ícones. O da aba vai embutido: uma requisição a menos e o index-unico.html
      continua funcionando sozinho, sem arquivo ao lado. O favicon.ico fica na
      raiz porque o navegador o procura lá por conta própria, mesmo sem link. -->
@@ -1325,6 +1339,9 @@ ul.reel-group{padding-right:var(--reel-gap)}
 </head>
 
 <body>
+<!-- Meta Pixel: visita contada mesmo com JavaScript desligado -->
+<noscript><img height="1" width="1" style="display:none" alt=""
+  src="https://www.facebook.com/tr?id=2605777323185034&amp;ev=PageView&amp;noscript=1"></noscript>
 
 <script>document.documentElement.classList.add('js');</script>
 
@@ -2052,6 +2069,27 @@ ul.reel-group{padding-right:var(--reel-gap)}
       window.addEventListener(ev, releaseReels, { passive: true });
     });
   document.addEventListener('visibilitychange', releaseReels);
+
+  /* ------------------------------------------------------------------
+     Conversão: clique em WhatsApp.
+     Todos os CTAs levam para fora do site, então não existe página de
+     obrigado para marcar a conversão — o clique é o evento. Vai como
+     Contact, que é o evento padrão da Meta para "pediu contato", com o
+     lugar de onde partiu, para dar para comparar hero, preço e fechamento.
+     O mesmo evento também é empilhado no dataLayer: se um dia entrar o Tag
+     Manager, ele já encontra tudo pronto sem precisar mexer aqui.
+     ------------------------------------------------------------------ */
+  document.querySelectorAll('a[href*="wa.me"]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var caixa = link.closest('section[id], header, footer');
+      var origem = (caixa && (caixa.id || caixa.tagName.toLowerCase())) || 'pagina';
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Contact', { content_name: origem });
+      }
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'clique_whatsapp', origem: origem });
+    });
+  });
 
   /* ------------------------------------------------------------------
      Efeitos de ponteiro fino (mouse/trackpad): tilt 3D e botão magnético.
