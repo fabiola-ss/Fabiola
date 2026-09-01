@@ -41,6 +41,8 @@ Se a mudança não aparecer no navegador, é cache: recarregue com Ctrl+Shift+R
 | `build-single.py` | Regera o `index-unico.html`. Rode depois de editar o `index.html`. |
 | `build-artifact.py` | Gera a versão de pré-visualização. |
 | `embed-font.py` | Refaz a fonte embutida se os textos em destaque mudarem. |
+| `favicon.ico`, `icon-192.png`, `apple-touch-icon.png` | Ícones do site. O da aba também vai embutido no HTML; estes cobrem o que o navegador busca sozinho e a tela de início do celular. |
+| `gera-favicon.py` | Refaz os ícones a partir da `logo.png`. Rode se a logo mudar. |
 | `CNAME`, `.nojekyll` | Configuração do GitHub Pages (ver acima). |
 
 ## Pendências
