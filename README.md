@@ -5,11 +5,14 @@ build: o que está na raiz deste repositório é o que vai ao ar.
 
 ## Onde o site mora
 
-GitHub Pages, servindo a raiz da branch `claude/landing-page-single-file-f64suf`
-(a branch padrão do repositório), no domínio **estudiocriar.online**.
+GitHub Pages, servindo a raiz da branch **`main`**, no domínio
+**estudiocriar.online**.
 
-Conferir ou mudar isso: **Settings → Pages**, no repositório. Ali é preciso que
-esteja *Deploy from a branch*, com a branch acima e a pasta `/ (root)`.
+É a `main` que vai ao ar — o que estiver em qualquer outra branch não aparece
+no site até ser levado para lá.
+
+Conferir isso: **Settings → Pages**, no repositório. Precisa estar em
+*Deploy from a branch*, com `main` e a pasta `/ (root)`.
 
 Dois arquivos existem só por causa disso e não devem ser apagados:
 
