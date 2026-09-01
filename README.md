@@ -39,8 +39,9 @@ Netlify.
 
 ## Pendências
 
-- Os links de WhatsApp usam o número provisório `5500000000000`. Procure por
-  `wa.me/5500000000000` no `index.html` e troque pelo número real.
+- Os 9 links de WhatsApp apontam para `5521996891354`, com a mensagem já
+  escrita. Para trocar número ou mensagem, procure por `wa.me/` no
+  `index.html` — todos usam exatamente a mesma URL.
 - O portfólio mostra 6 projetos, com a captura real da home de cada um. Faltam
   as capturas de **Total Skin**, **BCorporate** e **Grupo VT Rads** — os cards
   agora são só imagem, então esses três saíram da esteira até as capturas
