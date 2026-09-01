@@ -3,27 +3,29 @@
 Site estático, sem framework e sem dependências externas. Não há etapa de
 build: o que está na raiz deste repositório é o que vai ao ar.
 
-## Publicar no Netlify (uma vez só)
+## Onde o site mora
 
-1. No Netlify: **Add new site → Import an existing project → GitHub**.
-2. Autorize e escolha o repositório **fabiola-ss/Fabiola**.
-3. Confira os campos:
-   - **Branch to deploy:** `claude/landing-page-single-file-f64suf`
-     (é a branch padrão do repositório)
-   - **Build command:** deixe **vazio**
-   - **Publish directory:** `.` (um ponto)
+GitHub Pages, servindo a raiz da branch `claude/landing-page-single-file-f64suf`
+(a branch padrão do repositório), no domínio **estudiocriar.online**.
 
-   O `netlify.toml` já define isso; os campos devem vir preenchidos sozinhos.
-4. **Deploy site**.
+Conferir ou mudar isso: **Settings → Pages**, no repositório. Ali é preciso que
+esteja *Deploy from a branch*, com a branch acima e a pasta `/ (root)`.
 
-Feito isso, todo push para essa branch republica o site automaticamente.
-Não é preciso arrastar arquivo nem mover nada de pasta.
+Dois arquivos existem só por causa disso e não devem ser apagados:
 
-## Atualizar o site depois
+- `CNAME` — é ele que prende o domínio ao site. Sem ele o endereço volta a ser
+  `fabiola-ss.github.io/Fabiola`.
+- `.nojekyll` — desliga o Jekyll, que o GitHub Pages roda por padrão. Ele está
+  vazio de propósito: o que importa é existir.
 
-Editar o arquivo no GitHub e salvar (*Commit changes*) já dispara o deploy.
-Leva de 30 segundos a 1 minuto. O andamento aparece na aba **Deploys** do
-Netlify.
+## Atualizar o site
+
+Editar o arquivo no GitHub e salvar (*Commit changes*) já publica. Leva de 1 a
+2 minutos. O andamento aparece na aba **Actions** do repositório — quando o
+check verde aparecer no commit, está no ar.
+
+Se a mudança não aparecer no navegador, é cache: recarregue com Ctrl+Shift+R
+(ou Cmd+Shift+R no Mac).
 
 ## Arquivos
 
@@ -31,11 +33,12 @@ Netlify.
 |---|---|
 | `index.html` | A página. Todo o CSS, o JS e a fonte estão dentro dele. |
 | `hero-bg.webm` / `hero-bg.mp4` | Vídeo de fundo do hero. O HTML aponta para estes nomes — se renomear um, o vídeo some. |
-| `index-unico.html` | Cópia com o vídeo embutido, para publicar arrastando um arquivo só. Não é usada no deploy pelo GitHub. |
+| `index-unico.html` | Cópia com o vídeo embutido num arquivo só. Não participa do site publicado — serve para mandar a página por e-mail, abrir sem internet ou hospedar em outro lugar. |
 | `hero-bg-inline.*` | Vídeos reduzidos que alimentam o `index-unico.html`. |
 | `build-single.py` | Regera o `index-unico.html`. Rode depois de editar o `index.html`. |
 | `build-artifact.py` | Gera a versão de pré-visualização. |
 | `embed-font.py` | Refaz a fonte embutida se os textos em destaque mudarem. |
+| `CNAME`, `.nojekyll` | Configuração do GitHub Pages (ver acima). |
 
 ## Pendências
 
